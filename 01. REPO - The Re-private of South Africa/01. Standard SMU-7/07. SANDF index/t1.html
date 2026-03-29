@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+
+    <meta name="description" content="SMU-7 | TIER 1">
+
+    <meta name="theme-color" content="#8B0000">
+
+    <title>SMU-7 // TIER 1</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        :root {
+            --mil-red: #c41e0f;
+            --mil-red-bright: #ff3a28;
+            --radar-sweep: rgba(196, 30, 15, 0.85);
+            --glass-bg: rgba(8, 10, 16, 0.68);
+            --glass-border: rgba(196, 30, 15, 0.55);
+            --text-primary: #eef5ff;
+            --text-secondary: #ffcfaa;
+            --grid-color: rgba(196, 30, 15, 0.3);
+        }
+
+        body {
+            min-height: 100vh;
+            background: #010103;
+            font-family: 'Share Tech Mono', 'Courier New', 'Fira Code', monospace;
+            overflow-x: hidden;
+            overflow-y: auto;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .radar-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at 30% 40%, #0a0508 0%, #010001 100%);
+            overflow: hidden;
+        }
+
+        .radar-grid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: repeating-radial-gradient(circle at center, 
+                transparent 0px, 
+                transparent 140px, 
+                rgba(196, 30, 15, 0.25) 140px, 
+                rgba(196, 30, 15, 0.25) 142px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .radar-bearing {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(196,30,15,0.4), rgba(196,30,15,0.8), rgba(196,30,15,0.4), transparent);
+            transform: translate(-50%, -50%) rotate(0deg);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .radar-bearing-vertical {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 120%;
+            background: linear-gradient(0deg, transparent, rgba(196,30,15,0.4), rgba(196,30,15,0.8), rgba(196,30,15,0.4), transparent);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .radar-scanner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--mil-red-bright), #ff6648);
+            transform-origin: 0% 50%;
+            transform: translate(0%, -50%) rotate(0deg);
+            pointer-events: none;
+            z-index: 3;
+            box-shadow: 0 0 12px rgba(255, 50, 30, 0.6);
+            animation: radarRotate 8s linear infinite;
+        }
+
+        @keyframes radarRotate {
+            from { transform: translate(0%, -50%) rotate(0deg); }
+            to { transform: translate(0%, -50%) rotate(360deg); }
+        }
+
+        .radar-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, var(--mil-red-bright), transparent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 4;
+            animation: pulseCenter 1.2s ease-out infinite;
+        }
+
+        @keyframes pulseCenter {
+            0% { width: 20px; height: 20px; opacity: 0.9; }
+            100% { width: 180px; height: 180px; opacity: 0; }
+        }
+
+        .bogie {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--mil-red-bright);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255, 50, 30, 0.9);
+            pointer-events: none;
+            z-index: 5;
+            transition: all 0.02s linear;
+            animation: bogieFlicker 0.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes bogieFlicker {
+            from { opacity: 0.6; transform: scale(1); }
+            to { opacity: 1; transform: scale(1.3); }
+        }
+
+        .radar-static {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 20% 30%, rgba(196,30,15,0.03) 1px, transparent 1px);
+            background-size: 18px 18px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.35;
+        }
+
+        .command-interface {
+            position: relative;
+            z-index: 50;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2.2rem 2rem;
+            min-height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-left: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+        }
+
+        .avionics-header {
+            text-align: center;
+            padding: 0.2rem 0 0.9rem;
+            border-bottom: 2px solid var(--mil-red);
+            margin-bottom: 2rem;
+        }
+        .smu-designator {
+            font-size: 2.4rem;
+            letter-spacing: 0.45em;
+            font-weight: 800;
+            color: var(--mil-red);
+            text-transform: uppercase;
+        }
+        .avionics-sub {
+            font-size: 0.7rem;
+            letter-spacing: 0.25em;
+            color: var(--text-secondary);
+            margin-top: 0.4rem;
+        }
+
+        .teams-avionics {
+            margin: 1.2rem 0 2rem;
+        }
+        .section-commander {
+            margin-bottom: 1.2rem;
+            padding-left: 0.8rem;
+            border-left: 4px solid var(--mil-red);
+        }
+        .section-commander h2 {
+            font-size: 0.95rem;
+            letter-spacing: 2.5px;
+            color: var(--mil-red);
+            font-weight: 600;
+        }
+        .stealth-roster {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            justify-content: center;
+        }
+        .stealth-card {
+            background: rgba(12, 14, 20, 0.75);
+            border: 1px solid var(--mil-red);
+            border-radius: 1.2rem;
+            padding: 1.4rem 1.8rem;
+            flex: 1;
+            min-width: 300px;
+            cursor: pointer;
+            backdrop-filter: blur(2px);
+            transition: 0.08s linear;
+        }
+        .stealth-card:hover {
+            background: rgba(196, 30, 15, 0.18);
+            border-color: var(--mil-red-bright);
+        }
+        .card-rank {
+            font-size: 0.7rem;
+            color: var(--mil-red);
+            margin-bottom: 0.4rem;
+        }
+        .team-designation {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--mil-red);
+        }
+        .star-system {
+            font-size: 1rem;
+            letter-spacing: 0.2rem;
+            color: #FFD966;
+            margin: 0.45rem 0;
+        }
+        .commander-data {
+            font-size: 0.75rem;
+            margin: 0.3rem 0;
+            color: #ffcfb0;
+        }
+        .spec-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin: 0.5rem 0;
+        }
+        .spec-tag-modern {
+            background: rgba(196, 30, 15, 0.2);
+            border: 0.5px solid rgba(196, 30, 15, 0.7);
+            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.6rem;
+        }
+        .card-metrics-modern {
+            margin-top: 0.7rem;
+            font-size: 0.65rem;
+            color: #ffb48a;
+            border-top: 0.5px solid rgba(196,30,15,0.4);
+            padding-top: 0.6rem;
+        }
+
+        .action-modern {
+            margin: 2rem 0 1.8rem;
+        }
+        .action-header {
+            color: var(--mil-red);
+            border-left: 3px solid var(--mil-red);
+            padding-left: 1rem;
+            margin-bottom: 1.2rem;
+            font-size: 0.8rem;
+            letter-spacing: 1.8px;
+        }
+        .button-arsenal {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 0.9rem;
+        }
+        .avionics-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--mil-red);
+            padding: 0.7rem 0.3rem;
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 0.68rem;
+            letter-spacing: 1px;
+            color: #ffaa7a;
+            cursor: pointer;
+            border-radius: 32px;
+            backdrop-filter: blur(2px);
+            transition: 0.05s linear;
+        }
+        .avionics-btn:hover {
+            background: rgba(196, 30, 15, 0.35);
+            border-color: var(--mil-red-bright);
+            color: #ffccaa;
+        }
+        .avionics-btn:active {
+            transform: scale(0.97);
+        }
+
+        .status-modern {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin: 1.5rem 0 1rem;
+            padding: 0.7rem 1.2rem;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 1rem;
+            border: 0.5px solid rgba(196,30,15,0.6);
+        }
+        .status-item-modern {
+            font-size: 0.68rem;
+            color: #ffcfaf;
+        }
+
+        .session-timer {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            background: rgba(0,0,0,0.75);
+            border: 1px solid var(--mil-red);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #ffaa88;
+            z-index: 200;
+            backdrop-filter: blur(8px);
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        .footer-avionics {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--mil-red);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            font-size: 0.6rem;
+            color: #ccb69a;
+        }
+
+        .scroll-nav {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 300;
+        }
+        .scroll-nav-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--mil-red);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--mil-red);
+            transition: 0.08s linear;
+        }
+        .scroll-nav-btn:hover {
+            background: rgba(196, 30, 15, 0.4);
+            border-color: var(--mil-red-bright);
+        }
+
+        .emblem-modern {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            width: 60px;
+            height: 60px;
+            z-index: 200;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .watermark-modern {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.55rem;
+            color: rgba(196,30,15,0.55);
+            white-space: nowrap;
+            font-weight: 500;
+            z-index: 200;
+        }
+
+        .popup-overlay-session {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .popup-card-session {
+            background: #0a0608;
+            border: 2px solid var(--mil-red);
+            border-radius: 1rem;
+            padding: 1.6rem 2rem;
+            text-align: center;
+            max-width: 380px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        @media (max-width: 768px) {
+            .command-interface { padding: 1rem; }
+            .button-arsenal { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .scroll-nav { right: 8px; }
+            .session-timer { top: 12px; right: 12px; font-size: 0.6rem; padding: 4px 10px; }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="radar-background">
+    <div class="radar-grid"></div>
+    <div class="radar-bearing"></div>
+    <div class="radar-bearing-vertical"></div>
+    <div class="radar-scanner"></div>
+    <div class="radar-pulse"></div>
+    <div class="radar-static"></div>
+    <canvas id="bogieCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;"></canvas>
+</div>
+
+<div class="session-timer" id="sessionTimerDisplay">SESSION: 05:00</div>
+
+<div class="command-interface">
+    <div class="avionics-header">
+        <div class="smu-designator">SMU-7</div>
+    </div>
+
+    <div class="teams-avionics">
+        <div class="section-commander">
+            <h2>◈ THE TEAMS ◈</h2>
+        </div>
+        <div class="stealth-roster">
+            <div class="stealth-card" data-team="eden">
+                <div class="card-rank">#1 · ULTIMATE ASSET - THE NUMBER 1 MOST ETERNALLY FOREVER MOST ABSOLUTE HIGHEST RANK EVER: COMMANDER-IN-CHIEF (THE PRESIDENT)</div>
+                <a href="tinyurl.com/eden-portal" style="text-decoration: none"; title="enter therein."><div class="team-designation">EDEN STEALTH CV-1</div></a>
+                <div class="star-system">★★★★★★★★</div>
+                <div -6class="commander-data">CURRENTLY: CYRIL RAMAPHOSA</div>
+                <div class="spec-tags">
+                </div>
+                <div class="card-metrics-modern">Tier 1</div>
+            </div>
+            <div class="stealth-card" data-team="team8">
+                <div class="card-rank">#2 · PRESIDENTIAL GUARD</div>
+                <div class="team-designation">TEAM 8 · PROTECTORATE</div>
+                <div class="star-system">★★★★★</div>
+                <div class="commander-data">LCDR JOYSON · 5-STAR GOLD · PRESIDENTIAL DETAIL</div>
+                <div class="spec-tags">
+                    <span class="spec-tag-modern">CLOSE PROTECTION</span>
+                    <span class="spec-tag-modern">SMU-7 ASSET</span>
+                </div>
+                <div class="card-metrics-modern">🛡 REACTION: 0.38s | FORTIFIED PERIMETER</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION GRID - EXTENSIVE -->
+    <div class="action-modern">
+        <div class="action-header">◈ STEALTH COMMAND MATRIX · DIRECT CONTROL ◈</div>
+        <div class="button-arsenal" id="actionGrid">
+            <button class="avionics-btn" data-action="edenCore">EDEN CV-1 AVIONICS</button>
+            <button class="avionics-btn" data-action="team8Tactical">TEAM 8 TACTICAL</button>
+            <button class="avionics-btn" data-action="hoss8Star">HOSS 8-STAR CMD</button>
+            <button class="avionics-btn" data-action="radarStatus">RADAR STATUS</button>
+            <button class="avionics-btn" data-action="stealthEngage">STEALTH ENGAGE</button>
+            <button class="avionics-btn" data-action="navalAvionics">NAVAL AVIONICS</button>
+            <button class="avionics-btn" data-action="airDominance">AIR DOMINANCE</button>
+            <button class="avionics-btn" data-action="cyberShield">CYBER SHIELD</button>
+            <button class="avionics-btn" data-action="satLink">SAT LINK LOCK</button>
+            <button class="avionics-btn" data-action="droneSwarmIntel">DRONE SWARM INTEL</button>
+            <button class="avionics-btn" data-action="forceReadinessModern">FORCE READINESS</button>
+            <button class="avionics-btn" data-action="globalStratBrief">GLOBAL STRAT BRIEF</button>
+            <button class="avionics-btn" data-action="omegaAvionics">OMEGA AVIONICS PROTOCOL</button>
+            <button class="avionics-btn" data-action="multiDomainSync">MULTI-DOMAIN SYNC</button>
+            <button class="avionics-btn" data-action="cbrnDefense">CBRN DEFENSE</button>
+            <button class="avionics-btn" data-action="specOpsEmbed">SPEC OPS EMBED</button>
+        </div>
+    </div>
+
+    <div class="status-modern">
+        <div class="status-item-modern">◈ SMU-7: STEALTH COMMAND ACTIVE</div>
+        <div class="status-item-modern">◈ EDEN CV-1 #1 · 8-STAR</div>
+        <div class="status-item-modern">◈ TEAM 8 #2 · PRESIDENTIAL</div>
+        <div class="status-item-modern" id="liveTime">--:--:-- SAST</div>
+    </div>
+
+    <div class="footer-avionics">
+        <div>SMU-7 // AVIONICS-GRADE INTERFACE // STEALTH INTEGRATION // ZERO COMPROMISE</div>
+        <div>EDEN STEALTH CV-1 #1 · TEAM 8 #2 · HOSS 8-STAR ULTIMATE COMMAND</div>
+    </div>
+</div>
+
+<div class="scroll-nav">
+    <button class="scroll-nav-btn" id="scrollTopBtn">↑</button>
+    <button class="scroll-nav-btn" id="scrollMidBtn">◉</button>
+    <button class="scroll-nav-btn" id="scrollBottomBtn">↓</button>
+</div>
+
+<div class="emblem-modern" id="emblemContainer"><img src="images/SANDF_emblem.svg.png" alt="SANDF" style="width:100%;height:100%;object-fit:contain;" onerror="this.parentElement.innerHTML='<div style=\"background:rgba(196,30,15,0.2);border:1px solid #c41e0f;border-radius:50%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:0.5rem;\">SANDF</div>'"></div>
+<div class="watermark-modern">◈ SMU-7 // AVIONICS CORE // HOSS ULTIMATE // EDEN CV-1 8-STAR // TEAM 8 PROTECTORATE ◈</div>
+
+<script>
+    (function(){
+        "use strict";
+
+        // ========== RADAR BOGIE SYSTEM (AVIONICS-STYLE, RANDOM, SMOOTH, NO ERRORS) ==========
+        const canvas = document.getElementById('bogieCanvas');
+        const radarBg = document.querySelector('.radar-background');
+        let ctx = null;
+        let bogies = [];
+        let animationFrame = null;
+        let lastTimestamp = 0;
+        
+        function initCanvas() {
+            if(!canvas) return;
+            const rect = radarBg.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            canvas.style.width = `${rect.width}px`;
+            canvas.style.height = `${rect.height}px`;
+            ctx = canvas.getContext('2d');
+            generateBogies(18); // 18 precise bogies
+        }
+
+        function generateBogies(count) {
+            bogies = [];
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const maxRadius = Math.min(canvas.width, canvas.height) * 0.42;
+            for(let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 30 + Math.random() * maxRadius;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                const speedAngle = (Math.random() - 0.5) * 0.008;
+                const speedRadius = (Math.random() - 0.5) * 0.6;
+                bogies.push({
+                    x, y, angle, radius,
+                    speedAngle: speedAngle,
+                    speedRadius: speedRadius,
+                    life: 1
+                });
+            }
+        }
+
+        function updateBogies() {
+            if(!canvas || !ctx) return;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const maxRadius = Math.min(canvas.width, canvas.height) * 0.45;
+            for(let b of bogies) {
+                b.angle += b.speedAngle;
+                b.radius += b.speedRadius;
+                if(b.radius < 25) b.radius = 25;
+                if(b.radius > maxRadius) b.radius = maxRadius;
+                if(b.angle > Math.PI*2) b.angle -= Math.PI*2;
+                if(b.angle < 0) b.angle += Math.PI*2;
+                b.x = centerX + Math.cos(b.angle) * b.radius;
+                b.y = centerY + Math.sin(b.angle) * b.radius;
+                
+                // boundary wrap/reset to avoid glitches
+                if(b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) {
+                    b.radius = 40 + Math.random() * (maxRadius - 40);
+                    b.angle = Math.random() * Math.PI * 2;
+                    b.x = centerX + Math.cos(b.angle) * b.radius;
+                    b.y = centerY + Math.sin(b.angle) * b.radius;
+                }
+            }
+
+            if(Math.random() < 0.02 && bogies.length < 24) {
+                const centerX2 = canvas.width/2, centerY2 = canvas.height/2;
+                const maxR = Math.min(canvas.width, canvas.height)*0.42;
+                bogies.push({
+                    x: centerX2 + Math.cos(Math.random()*Math.PI*2)*(30+Math.random()*maxR),
+                    y: centerY2 + Math.sin(Math.random()*Math.PI*2)*(30+Math.random()*maxR),
+                    angle: Math.random()*Math.PI*2,
+                    radius: 30+Math.random()*maxR,
+                    speedAngle: (Math.random()-0.5)*0.007,
+                    speedRadius: (Math.random()-0.5)*0.55,
+                    life:1
+                });
+            }
+            if(Math.random() < 0.015 && bogies.length > 8) {
+                bogies.splice(Math.floor(Math.random()*bogies.length),1);
+            }
+        }
+
+        function drawBogies() {
+            if(!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for(let b of bogies) {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, 4, 0, Math.PI*2);
+                ctx.fillStyle = '#ff4a38';
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = '#ff3311';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, 2, 0, Math.PI*2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+            }
+        }
+
+        function radarLoop() {
+            if(!canvas || !ctx) return;
+            updateBogies();
+            drawBogies();
+            requestAnimationFrame(radarLoop);
+        }
+
+        window.addEventListener('resize', () => {
+            if(canvas && radarBg) {
+                const rect = radarBg.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                canvas.style.width = `${rect.width}px`;
+                canvas.style.height = `${rect.height}px`;
+                generateBogies(18);
+                if(ctx) drawBogies();
+            }
+        });
+        
+        setTimeout(() => {
+            initCanvas();
+            if(canvas && radarBg) radarLoop();
+        }, 100);
+
+        let timeoutId = null;
+        const sessionDisplay = document.getElementById('sessionTimerDisplay');
+        let timeLeft = 300; // 5 minutes = 300 seconds
+        
+        function updateTimerDisplay() {
+            if(!sessionDisplay) return;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            sessionDisplay.innerText = `SESSION: ${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        }
+        
+        function startSessionCountdown() {
+            if(timeoutId) clearInterval(timeoutId);
+            timeoutId = setInterval(() => {
+                if(timeLeft <= 0) {
+                    clearInterval(timeoutId);
+                    // Force page close / tab termination (simulate unexpected close)
+                    document.body.innerHTML = '<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:#c41e0f;display:flex;align-items:center;justify-content:center;font-family:monospace;z-index:99999;">SESSION TERMINATED // SECURITY PROTOCOL // PAGE WILL CLOSE</div>';
+                    setTimeout(() => {
+                        window.close();
+                        // Fallback: redirect to blank
+                        window.location.href = 'about:blank';
+                    }, 500);
+                } else {
+                    timeLeft--;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+        
+        startSessionCountdown();
+    
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `position:fixed; bottom:100px; right:28px; background:#0a0508dd; border-left:4px solid #c41e0f; padding:8px 18px; font-size:0.7rem; font-family:monospace; color:#ffccaa; z-index:10000; backdrop-filter:blur(8px); border-radius:8px; pointer-events:none;`;
+            toast.innerText = `◈ SMU-7 // ${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2200);
+        }
+        
+        const actionResponses = {
+            edenCore: () => showToast("EDEN CV-1 AVIONICS: 8-Star ultimate, stealth profile active, radar cross-section: 0.0001m²"),
+            team8Tactical: () => showToast("TEAM 8 TACTICAL: LCDR JOYSON 5-Star Gold, presidential shield, reaction force 0.38s"),
+            hoss8Star: () => showToast("HOSS 8-STAR CMD: Full spectrum authority, SMU-7 avionics override engaged"),
+            radarStatus: () => showToast("RADAR STATUS: AN/APG-85 AESA active, 18 bogies tracked, 360° coverage"),
+            stealthEngage: () => showToast("STEALTH ENGAGE: Radar absorbent materials active, IR suppression nominal, LO profile"),
+            navalAvionics: () => showToast("NAVAL AVIONICS: Surface fleet integrated, submarine passive sonar online"),
+            airDominance: () => showToast("AIR DOMINANCE: Stealth fighter wing, NEZ established, all bogies neutralized"),
+            cyberShield: () => showToast("CYBER SHIELD: Quantum encryption, intrusion detection active, no breaches"),
+            satLink: () => showToast("SAT LINK LOCK: MILSATCOM encrypted, 99.7% coverage, real-time downlink"),
+            droneSwarmIntel: () => showToast("DRONE SWARM: 96 UCAV, AI-coordinated, TEAM 8 overwatch"),
+            forceReadinessModern: () => showToast("FORCE READINESS: Eden CV-1 100% | Team 8 100% | Avionics sync: optimal"),
+            globalStratBrief: () => showToast("GLOBAL STRAT BRIEF: SMU-7 command, all sectors nominal, stealth posture maintained"),
+            omegaAvionics: () => showToast("OMEGA AVIONICS PROTOCOL: Strategic defense condition, electronic warfare suite active"),
+            multiDomainSync: () => showToast("MULTI-DOMAIN SYNC: Air, Land, Sea, Cyber, Space unified under SMU-7"),
+            cbrnDefense: () => showToast("CBRN DEFENSE: Filters active, threat level minimal, all stations green"),
+            specOpsEmbed: () => showToast("SPEC OPS EMBED: SMU-7 shadow teams, covert insertion ready, mission parameters set")
+        };
+        
+        document.querySelectorAll('.avionics-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = btn.getAttribute('data-action');
+                if(action && actionResponses[action]) {
+                    btn.style.transform = 'scale(0.96)';
+                    setTimeout(() => btn.style.transform = '', 80);
+                    actionResponses[action]();
+                } else showToast(`Command: ${action} acknowledged`);
+            });
+        });
+        
+        document.querySelectorAll('.stealth-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const team = card.getAttribute('data-team');
+                if(team === 'eden') showToast("EDEN CV-1 #1: 8-Star ultimate, HOSS command, avionics integrated");
+                else if(team === 'team8') showToast("TEAM 8 #2: LCDR JOYSON 5-Star Gold, presidential protection detail");
+                else showToast("Asset status: operational");
+            });
+        });
+        
+        const roster = document.querySelector('.stealth-roster');
+        document.getElementById('scrollTopBtn')?.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+        document.getElementById('scrollMidBtn')?.addEventListener('click', () => roster?.scrollIntoView({behavior:'smooth',block:'start'}));
+        document.getElementById('scrollBottomBtn')?.addEventListener('click', () => window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}));
+        
+        function updateClock() {
+            const timeSpan = document.getElementById('liveTime');
+            if(timeSpan) timeSpan.innerText = new Date().toLocaleTimeString('en-GB',{hour12:false, timeZone:'Africa/Johannesburg'}) + ' SAST';
+        }
+        setInterval(updateClock,1000);
+        updateClock();
+        
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if(e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'U')) e.preventDefault();
+        });
+        if(window.console) { console.log = console.warn = console.table = console.debug = ()=>{}; }
+        
+        setTimeout(() => showToast("SMU-7 AVIONICS CORE // RADAR ACTIVE // 5-MINUTE SESSION // STEALTH INTEGRATION"), 400);
+    })();
+
+</script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

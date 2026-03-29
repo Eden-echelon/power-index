@@ -1,0 +1,114 @@
+A Comprehensive Guide to Cryptography: the Basics
+
+Cryptography is the mathematical science of securing information so that only authorized parties can access it. It is the foundation of digital trust.
+
+The Six Major Security Goals -
+
+To understand cryptography, one must first understand what it aims to achieve.
+
+01.  confidentiality: the most well-known goal. It ensures that only intended recipients can read the data. even if an attacker intercepts the message, it should be unintelligible.
+
+02.  integrity: this guarantees that data has not been altered in transit, whether accidentally or maliciously. the recipient can verify that the message received is exactly what was sent.
+
+03.  authentication: this allows a party to verify the identity of the sender or receiver. it confirms that you are indeed communicating with who you think you are.
+
+04.  non-repudiation: this prevents a sender from denying they sent a message. it provides undeniable proof of the origin of the data.
+
+05.  subtlety (covertness): in many threat models, especially in high-risk environments, the *act of communicating* can be as dangerous as the message itself.
+
+    - the concept: it's not just about protecting the message; it's about protecting the existence of the transmission. even with unbreakable encryption, an adversary can perform traffic analysis—examining the volume, timing, and metadata of your data flows.
+
+    - why text matters: a massive spike in data, like an image or video upload, is a tactical giveaway. Text is the most subtle medium. It minimizes noise and reduces the digital footprint, helping to hide the fact that a secret conversation is even taking place.
+
+06.  availability: a system, its' data, and its cryptographic services must be accessible to authorized users when needed. A denial-of-service attack, for instance, targets availability, even if the data itself remains confidential and unaltered.
+
+---
+
+Core Concepts
+
+- encryption: The process of transforming readable data (**plaintext**) into an unreadable, scrambled format (**ciphertext**) using a mathematical algorithm and a secret value.
+
+- decryption: The reverse process of transforming ciphertext back into plaintext using a key.
+
+- key: a secret value (a string of bits) that controls the encryption and decryption process. a fundamental principle of modern cryptography is **Kerckhoffs’s Principle:** a cryptosystem should be secure even if everything about the system, except the key, is public knowledge.* security depends entirely on the secrecy of the key.
+
+---
+
+Types of Cryptography
+
+There are three fundamental types of cryptographic algorithms, each serving a distinct purpose.
+
+A) Symmetric Cryptography
+
+- mechanism: uses the *same secret key* for both encryption and decryption.
+- advantages: It is *very fast* and efficient for encrypting large amounts of data.
+- disadvantage: The main challenge is **key distribution**. The sender and receiver must securely share the single secret key without anyone else intercepting it.
+
+- examples:
+    - Advanced Encryption Standard (AES): The modern gold standard, widely used today.
+    - Data Encryption Standard (DES): The predecessor, now considered obsolete due to its small key size.
+- Use Cases: Disk encryption (e.g., BitLocker, FileVault), encrypting files, securing VPN tunnels.
+
+B) Asymmetric Cryptography (Public-Key Cryptography)
+
+- mechanism: uses a mathematically linked *key pair*:
+
+    - A *Public Key:* Can be shared openly with anyone.
+    - A *Private Key:* Must be kept absolutely secret by its owner.
+
+- *Advantages:* It elegantly *solves the key distribution problem*. Anyone can use your public key to encrypt a message that *only you* can decrypt with your private key.
+- *Disadvantage:* It is *significantly slower* than symmetric cryptography.
+
+- *Examples:*
+    - *RSA:* One of the first and most widely implemented public-key algorithms.
+    - *Elliptic Curve Cryptography (ECC):* A modern alternative that provides equivalent security with smaller keys, making it more efficient.
+- *Use Cases:* Securing the initial handshake in **HTTPS (TLS)** , secure email (PGP), and creating **digital signatures**.
+
+C) Hash Functions
+
+- Mechanism: These are *one-way mathematical functions*. They take an input (plaintext) of any size and produce a fixed-size output called a *hash*, *digest*, or *fingerprint*.
+
+- Key Properties:
+
+    - One-way: It is computationally infeasible to reverse a hash back to the original input.
+    - Deterministic: The same input will always produce the same hash.
+    - Collision-resistant: It is infeasible to find two different inputs that produce the same hash.
+
+- Advantages: They are used to verify **integrity**—any change to the data, even a single bit, will result in a completely different hash.
+
+- Examples:
+    - SHA-256 (Secure Hash Algorithm): A widely used, secure hash function.
+    - MD5 (Message Digest 5): A popular but now **broken** algorithm, as collisions have been found. It should not be used for security.
+- Use Cases: Verifying file downloads, storing password hashes (never plaintext passwords), and ensuring data integrity in digital signatures.
+
+---
+
+How Modern Security Actually Works: The Hybrid Approach
+
+In real-world systems, no single type of cryptography is used in isolation. They are combined to leverage the strengths of each. This is often called a *hybrid cryptosystem*.
+
+Example: HTTPS (The foundation of secure web browsing)
+
+1.  Key Exchange (Asymmetric): When your browser connects to a secure website (e.g., a bank), it uses asymmetric cryptography (like RSA or ECC) to perform a **TLS handshake**. This securely exchanges a temporary, unique **session key** without exposing it to eavesdroppers.
+
+2.  Bulk Encryption (Symmetric): Once the session key is established, all data for the rest of the session (the web page content, form data, etc.) is encrypted using **symmetric cryptography** (like AES). This provides the speed needed for the large amount of data being transferred.
+
+3.  Integrity (Hash Functions): Throughout the process, hash functions (like SHA-256) are used to create Message Authentication Codes (MACs). These ensure that the data has not been tampered with during transmission.
+
+This hybrid system gives us the best of both worlds: the secure key exchange of asymmetric crypto combined with the speed and efficiency of symmetric crypto, all verified for integrity by hash functions.
+
+---
+
+The Most Important Truth
+
+Without keys, there is no cryptography. Without proper key management, there is no security.
+
+You can have the most advanced algorithms in the world, but if your keys are:
+- Too short and easy to guess,
+- Stored insecurely (e.g., hardcoded in source code),
+- Shared improperly,
+- Or not revoked when compromised,
+
+...then your entire security infrastructure is an illusion. **Key management**—the secure generation, storage, distribution, rotation, and destruction of keys—is the single most critical and challenging aspect of applied cryptography.
+
+
