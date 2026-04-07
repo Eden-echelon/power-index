@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+
+    <title>SMU PROTOCOL-6</title>
+
+    <link rel="icon" href="01. SMU Protocol-6/SANDF_emblem.svg.png">
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+
+        /* THE STYLING NEVER CHANGES. NO GLOWS. NO SHADOWS. TACTICAL, SOLDIER & SOUTH AFRICAN. THE STYLING NEVER EVER EVER EVER CHANGES. NOT EVEN 1 BIT. NEVER. */
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        :root {
+            --olive-drab: #544b2e;
+            --field-drab: #4a5d3b;
+            --night-vision: #1f3b2c;
+            --tactical-black: #0a0f0c;
+            --sand-dark: #73654a;
+            --terminal-green: #b3ffb0;
+            --displays: #d9d0b5;
+            --caution-amber: #ffb347;
+            --signal-red: #d15a5a;
+            --grid-alpha: rgba(170, 200, 140, 0.1);
+            --rain-color1: rgba(160, 210, 185, 0.55);
+            --rain-color2: rgba(130, 190, 165, 0.4);
+            --splash-alpha: rgba(200, 240, 210, 0.25);
+        }
+
+        body {
+            background-color: #0a100a;
+            background-image: linear-gradient(45deg, var(--grid-alpha) 1px, transparent 1px), linear-gradient(-45deg, var(--grid-alpha) 1px, transparent 1px);
+            background-size: 42px 42px;
+            font-family: 'Courier New', Courier, 'JetBrains Mono', 'Fira Code', monospace;
+            min-height: 100vh;
+            padding: 14px;
+            color: #d0ddc2;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .rain-droplet {
+            position: absolute;
+            background: linear-gradient(135deg, var(--rain-color1), var(--rain-color2));
+            border-radius: 0 0 40% 40%;
+            animation: fall linear infinite;
+            pointer-events: none;
+            filter: blur(0.5px);
+            box-shadow: 0 0 2px rgba(180, 240, 200, 0.4);
+        }
+
+        .rain-splash {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--splash-alpha), transparent);
+            animation: splash 0.5s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) translateX(0); opacity: 0.9; }
+            85% { opacity: 0.7; }
+            100% { transform: translateY(100vh) translateX(20px); opacity: 0; }
+        }
+
+        @keyframes splash {
+            0% { transform: scale(0.5); opacity: 0.8; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .tac-encryptor {
+            max-width: 1600px;
+            width: 100%;
+            background: rgba(6, 14, 5, 0.97);
+            backdrop-filter: blur(6px);
+            border: 2px solid #6c8b58;
+            border-radius: 28px;
+            padding: 1.3rem 1.1rem;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.7);
+            position: relative;
+            z-index: 2;
+        }
+
+        .watermark {
+            position: fixed;
+            bottom: 12px;
+            left: 12px;
+            font-size: 0.6rem;
+            color: #5a7850;
+            background: rgba(0,0,0,0.55);
+            padding: 4px 14px;
+            border-radius: 20px;
+            z-index: 1001;
+            letter-spacing: 1px;
+            pointer-events: none;
+            font-weight: bold;
+        }
+
+        .sector-id { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; border-bottom: 2px solid #6f8e5c; padding-bottom: 0.7rem; margin-bottom: 1.6rem; gap: 12px 20px; }
+        .op-badge { background: #1e301c; border-left: 8px solid #b8dc9c; padding: 0.35rem 1.4rem; font-weight: 800; font-size: 1.2rem; letter-spacing: 4px; color: #f2ffe3; text-transform: uppercase; border-radius: 0 28px 28px 0; }
+        .comsec { display: flex; gap: 14px; flex-wrap: wrap; }
+        .comsec button { background: #2c3f27; border: 1.5px solid #86a572; color: #f3ffe8; font-family: inherit; font-weight: 700; font-size: 0.8rem; padding: 8px 20px; border-radius: 48px; cursor: pointer; transition: 0.08s linear; text-transform: uppercase; }
+        .comsec button:active { transform: translateY(3px); }
+        .mil-input { width: 100%; background: #0a1308; border: 2px solid #4b6a3c; color: #e2ffcd; font-family: monospace; font-size: 0.9rem; padding: 12px 14px; border-radius: 20px; margin: 8px 0 12px 0; }
+        .mil-input:focus { outline: none; border-color: #c3f0a5; background: #111f0e; }
+        .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 10px; }
+        .mil-btn { background: #2f482a; border: none; border-bottom: 4px solid #162012; color: #f4ffe8; font-family: monospace; font-weight: 700; padding: 10px 16px; border-radius: 48px; flex: 1 0 auto; cursor: pointer; transition: 0.04s linear; text-transform: uppercase; letter-spacing: 0.8px; }
+        .mil-btn:active { transform: translateY(4px); border-bottom-width: 1px; }
+        .terminal-out { background: #0a1208; border: 2px solid #4c6e3b; border-radius: 20px; padding: 12px; margin-top: 14px; word-break: break-all; font-family: monospace; font-size: 0.8rem; color: #d3ffbc; max-height: 140px; overflow: auto; }
+        .key-material { background: #1a2b16; border-radius: 18px; padding: 12px; margin: 10px 0; border-left: 5px solid #a8cf8c; font-size: 0.7rem; }
+        .fingerprint { color: #d0f0b0; background: #1f351b; padding: 3px 12px; border-radius: 32px; font-size: 0.65rem; font-weight: 700; display: inline-block; }
+        .mil-footer { border-top: 2px solid #5a7850; padding-top: 18px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 18px; font-size: 0.75rem; }
+        .epoch { background: #202f1a; padding: 6px 18px; border-radius: 60px; border: 1px solid #7ea068; font-family: monospace; }
+        .walkie-panel { background: #0e1a0c; border-radius: 24px; padding: 18px; margin-top: 18px; border: 1px solid #5e7e4a; }
+        .chat-feed { background: #0a1108; border-radius: 20px; height: 280px; overflow-y: auto; padding: 12px; margin-bottom: 16px; font-size: 0.75rem; }
+        .chat-message { margin-bottom: 12px; border-left: 3px solid #9fcc7a; padding-left: 10px; word-break: break-word; animation: fadeSlide 0.2s ease; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+        .msg-sender { color: #ffd966; font-weight: bold; }
+        .msg-time { color: #8aa878; font-size: 0.6rem; }
+        .za-flag { display: inline-flex; align-items: center; gap: 6px; background: #2a4024; padding: 4px 12px; border-radius: 40px; }
+        .ptt-indicator { background: #2f482a; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 8px; }
+        .status-led { width: 10px; height: 10px; border-radius: 50%; background-color: #44ff44; box-shadow: 0 0 4px #44ff44; animation: pulse 1.2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        @media (max-width: 750px) { .row { flex-direction: column; } .mil-btn { width: 100%; } }
+        .timer-critical { color: #ff8866; text-shadow: 0 0 2px red; }
+        .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: repeating-radial-gradient(circle at 20% 30%, rgba(0,0,0,0.08), rgba(0,0,0,0.02) 2px); z-index: 999; }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="rain-container" id="rainContainer"></div>
+
+<div class="noise-overlay"></div>
+
+<div class="watermark">◤ SANDF HIGH COMMAND ◢ | 71 MINUTES</div>
+
+<div class="tac-encryptor">
+
+    <div class="sector-id">
+
+        <div class="op-badge">◥ SMU PROTOCOL-6</div>
+
+        <div class="comsec">
+            <button id="emergencyZeroiseBtn" class="danger">💀 ZEROISE ALL</button>
+            <button id="newCryptoSessionBtn">🔄 NEW SESSION (AES+RSA)</button>
+            <div class="za-flag"><span>🇿🇦</span><span>BIG-JOE</span></div>
+        </div>
+    </div>
+
+    <div class="walkie-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 14px;">
+            <div class="ptt-indicator"><span class="status-led"></span> <span>SECURE CHANNEL · LIVE</span></div>
+            <div><span class="fingerprint" id="cryptoHealth">A Comprehensive Guide To Cryptography: The Basics</span></div>
+        </div>
+        
+        <div class="key-material" id="keyStatusArea">
+            <div><strong>🔑 SYMMETRIC KEY (AES-256-GCM)</strong> <span id="aesFingerprint" class="fingerprint">[GENERATING...]</span></div>
+            <div style="margin-top: 6px;"><strong>🔓 ASYMMETRIC (RSA-2048)</strong> <span id="rsaStatusSpan" class="fingerprint">[NOT INITIALIZED]</span></div>
+            <div class="row" style="margin-top: 10px;">
+                <button id="rotateAesKeyBtn" class="mil-btn">🔄 ROTATE AES KEY</button>
+                <button id="genRsaWalkieBtn" class="mil-btn">🔑 GEN RSA KEYPAIR</button>
+                <button id="exportPubWalkieBtn" class="mil-btn">📤 EXPORT PUBLIC KEY</button>
+                <button id="importPeerKeyBtn" class="mil-btn">📥 IMPORT PEER KEY</button>
+            </div>
+            <div id="peerKeyStatus" class="fingerprint" style="margin-top: 6px;">⚙️ No peer RSA key loaded.</div>
+        </div>
+        
+        <div style="margin: 18px 0 12px 0;">
+            <label><strong>🎙️ PUSH-TO-TEXT MESSAGE (PLAINTEXT)</strong></label>
+            <textarea id="walkieMessageInput" class="mil-input" rows="2" placeholder="Over. This is encrypted transmission..."></textarea>
+            <div class="row">
+                <button id="encryptWalkieBtn" class="mil-btn">🔒 ENCRYPT (AES-GCM)</button>
+                <button id="sendWalkieBtn" class="mil-btn" style="background:#3d5e35;">📡 SEND TRANSMISSION</button>
+                <button id="clearWalkieBtn" class="mil-btn">🗑 CLEAR</button>
+            </div>
+            <label><strong>📻 ENCRYPTED OUTPUT (CIPHERTEXT) — COPY TO SHARE</strong></label>
+            <div class="terminal-out" id="cipherWalkieOut">[ciphertext will appear after encryption]</div>
+        </div>
+        
+        <div class="row" style="margin-top: 8px;">
+            <input type="text" id="walkieCodename" class="mil-input" style="flex:2;" placeholder="CODENAME (e.g., BIG JOE, HOSS, KASEY)" value="KASEY">
+            <button id="refreshFeedWalkieBtn" class="mil-btn" style="flex:1;">🔄 REFRESH FEED</button>
+            <button id="clearLocalFeedBtn" class="mil-btn" style="flex:1; background:#4a3e2a;">🗑 CLEAR LOCAL</button>
+        </div>
+        <label><strong>📡 INCOMING TRANSMISSIONS (REQUIRE ACTIVE KEY)</strong></label>
+        <div class="chat-feed" id="walkieChatFeed">[secure channel initializing... waiting for AES key]</div>
+        
+        <div class="row" style="margin-top: 12px;">
+            <button id="testDecryptClipboardBtn" class="mil-btn">🔓 DECRYPT FROM CLIPBOARD</button>
+            <button id="showKeyFingerprintBtn" class="mil-btn">🔍 SHOW KEY FINGERPRINT</button>
+            <button id="emergencyAlertBtn" class="mil-btn danger" style="background:#562e28;">🚨 EMERGENCY BROADCAST</button>
+        </div>
+    </div>
+
+    <div class="mil-footer">
+        <div class="epoch"><span id="liveTime">--:--:--Z</span> · <span id="sessionCountdown">71:00</span></div>
+        <div>WALKIE-TALKIE CRYPTO · AES-256-GCM · RSA-2048 · REAL MATHEMATICS</div>
+        <div class="fingerprint">🇿🇦 SMU PROTOCOL-6 | NO WEAKNESSES | GOD MODE</div>
+    </div>
+</div>
+
+<script>
+
+// =============================================================================
+// EDEN AUTO-JS ENGINE 6.7
+// =============================================================================
+
+(function(){
+
+    "use strict";
+    // FIREBASE CONFIG
+    const firebaseConfig = { apiKey: "AIzaSyD-hhoLpddOoMq1tUlA4SqnwncFnVpaHIQ", authDomain: "eden-4a8d3.firebaseapp.com", projectId: "eden-4a8d3", storageBucket: "eden-4a8d3.firebasestorage.app", messagingSenderId: "421147129483", appId: "1:421147129483:web:9495dfb813fe6195f2c68e" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const messagesRef = db.collection("smu_walkietalkie_secure");
+    
+    // GLOBAL STATE
+    let aesCryptoKey = null;           // AES-256-GCM key object
+    let aesKeyBase64 = null;           // raw base64 for fingerprint
+    let rsaKeyPairWalkie = { publicKey: null, privateKey: null };
+    let peerRsaPublicKey = null;
+    let sessionRemaining = 71 * 60;    // 71 minutes
+    let timerInterval = null;
+    let feedUnsubscribe = null;
+    
+    // DOM elements
+    const aesFingerprintSpan = document.getElementById('aesFingerprint');
+    const rsaStatusSpan = document.getElementById('rsaStatusSpan');
+    const peerKeyStatusDiv = document.getElementById('peerKeyStatus');
+    const walkieMessageInput = document.getElementById('walkieMessageInput');
+    const cipherWalkieOut = document.getElementById('cipherWalkieOut');
+    const chatFeedDiv = document.getElementById('walkieChatFeed');
+    const codenameInput = document.getElementById('walkieCodename');
+    const sessionCountdownSpan = document.getElementById('sessionCountdown');
+    const cryptoHealthSpan = document.getElementById('cryptoHealth');
+    
+    async function generateFreshAesKey() {
+        try {
+            const rawKey = crypto.getRandomValues(new Uint8Array(32));
+            const key = await crypto.subtle.importKey('raw', rawKey, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+            aesCryptoKey = key;
+            aesKeyBase64 = btoa(String.fromCharCode(...rawKey));
+            const fp = Array.from(rawKey.slice(0,4)).map(b=>b.toString(16).padStart(2,'0')).join('');
+            aesFingerprintSpan.innerHTML = `✅ AES ACTIVE (fp: ${fp}...)`;
+            cryptoHealthSpan.innerHTML = '🟢 AES-256 READY';
+            return true;
+        } catch(e) { aesFingerprintSpan.innerHTML = '❌ AES FAIL'; return false; }
+    }
+    
+    async function aesEncrypt(plaintext) {
+        if(!aesCryptoKey) throw new Error("NO AES KEY. Generate session first.");
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aesCryptoKey, new TextEncoder().encode(plaintext));
+        const combined = new Uint8Array(iv.length + encrypted.byteLength);
+        combined.set(iv, 0);
+        combined.set(new Uint8Array(encrypted), iv.length);
+        return btoa(String.fromCharCode(...combined));
+    }
+    
+    async function aesDecrypt(cipherB64) {
+        if(!aesCryptoKey) throw new Error("AES KEY MISSING");
+        const raw = Uint8Array.from(atob(cipherB64), c=>c.charCodeAt(0));
+        if(raw.length < 12) throw new Error("Invalid ciphertext");
+        const iv = raw.slice(0,12);
+        const ciphertext = raw.slice(12);
+        const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, aesCryptoKey, ciphertext);
+        return new TextDecoder().decode(decrypted);
+    }
+    
+    async function generateRsaWalkie() {
+        try {
+            const keyPair = await crypto.subtle.generateKey({
+                name: 'RSA-OAEP',
+                modulusLength: 2048,
+                publicExponent: new Uint8Array([1,0,1]),
+                hash: 'SHA-256'
+            }, true, ['encrypt', 'decrypt']);
+            rsaKeyPairWalkie = keyPair;
+            const exported = await crypto.subtle.exportKey('spki', rsaKeyPairWalkie.publicKey);
+            const hash = await crypto.subtle.digest('SHA-256', exported);
+            const fp = Array.from(new Uint8Array(hash).slice(0,4)).map(b=>b.toString(16).padStart(2,'0')).join('');
+            rsaStatusSpan.innerHTML = `✅ RSA-2048 ACTIVE (fp: ${fp}...)`;
+            cryptoHealthSpan.innerHTML = '🟢 AES + RSA ACTIVE';
+            return true;
+        } catch(e) { rsaStatusSpan.innerHTML = `❌ RSA FAIL`; return false; }
+    }
+    
+    async function fullSystemZeroise() {
+        aesCryptoKey = null;
+        aesKeyBase64 = null;
+        rsaKeyPairWalkie = { publicKey: null, privateKey: null };
+        peerRsaPublicKey = null;
+        aesFingerprintSpan.innerHTML = '🔴 ZEROISED';
+        rsaStatusSpan.innerHTML = '🔴 ZEROISED';
+        peerKeyStatusDiv.innerHTML = '⚙️ All keys wiped. Generate new session.';
+        cipherWalkieOut.innerText = '[cryptography disabled]';
+        cryptoHealthSpan.innerHTML = '🔴 NO KEYS';
+        await generateFreshAesKey();  // auto-recover for usability but with warning
+        addSystemMessage("⚠️ EMERGENCY ZEROISE: Previous keys destroyed. New AES session auto-generated.");
+    }
+    
+    async function sendSecureTransmission() {
+        try {
+            if(!aesCryptoKey) throw new Error("No AES key. Generate or rotate key first.");
+            const plain = walkieMessageInput.value.trim();
+            if(!plain) throw new Error("Message empty.");
+            const codename = codenameInput.value.trim() || "KASEY";
+            const encryptedPayload = await aesEncrypt(plain);
+            await messagesRef.add({
+                codename: codename,
+                payload: encryptedPayload,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                timeStr: new Date().toISOString().slice(11,19)+'Z'
+            });
+            addSystemMessage(`✅ Transmission sent (encrypted): "${plain.substring(0,45)}..."`);
+            walkieMessageInput.value = '';
+            cipherWalkieOut.innerText = encryptedPayload;
+        } catch(e) { addSystemMessage(`❌ SEND ERROR: ${e.message}`); }
+    }
+    
+    function loadSecureFeed() {
+        if(feedUnsubscribe) feedUnsubscribe();
+        feedUnsubscribe = messagesRef.orderBy('timestamp', 'desc').limit(60).onSnapshot(snapshot => {
+            const docs = snapshot.docs.reverse();
+            chatFeedDiv.innerHTML = '';
+            for(const doc of docs) {
+                const data = doc.data();
+                const cipher = data.payload || '';
+                const sender = escapeHtml(data.codename || 'unknown');
+                const time = data.timeStr || '';
+                const msgId = doc.id;
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'chat-message';
+                msgDiv.innerHTML = `
+                    <div><span class="msg-sender">${sender}</span> <span class="msg-time">${time}</span></div>
+                    <div id="msgBody-${msgId}" style="word-break:break-all;">🔒 [ENCRYPTED] ${cipher.substring(0, 48)}...</div>
+                    <div style="margin-top:6px;"><button class="decryptSingleBtn" data-cipher="${escapeAttr(cipher)}" data-target="msgBody-${msgId}" style="background:#2f482a; padding:4px 14px; border-radius:30px; border:none; color:#e2ffcd; cursor:pointer;">🔓 DECRYPT THIS MSG</button></div>
+                `;
+                chatFeedDiv.appendChild(msgDiv);
+            }
+
+            document.querySelectorAll('.decryptSingleBtn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const cipherText = btn.getAttribute('data-cipher');
+                    const targetId = btn.getAttribute('data-target');
+                    const targetDiv = document.getElementById(targetId);
+                    if(!cipherText || !targetDiv) return;
+                    try {
+                        if(!aesCryptoKey) throw new Error("No AES key loaded.");
+                        const decrypted = await aesDecrypt(cipherText);
+                        targetDiv.innerHTML = `🔓 DECRYPTED: ${escapeHtml(decrypted)}`;
+                        addSystemMessage("✓ Message decrypted successfully.");
+                    } catch(err) {
+                        targetDiv.innerHTML = `❌ DECRYPT FAIL: ${err.message} (wrong key/tampered)`;
+                        addSystemMessage(`⚠️ Decryption error: ${err.message}`);
+                    }
+                });
+            });
+        }, err => { chatFeedDiv.innerHTML = `<div class="chat-message">Firestore error: ${err.message}</div>`; });
+    }
+    
+    function addSystemMessage(msg) {
+        const sysDiv = document.createElement('div');
+        sysDiv.className = 'chat-message';
+        sysDiv.style.borderLeftColor = '#ffb347';
+        sysDiv.innerHTML = `<span class="msg-sender">📡 SYSTEM</span> <span class="msg-time">${new Date().toISOString().slice(11,19)}</span><br>${escapeHtml(msg)}`;
+        chatFeedDiv.appendChild(sysDiv);
+        chatFeedDiv.scrollTop = chatFeedDiv.scrollHeight;
+        setTimeout(() => sysDiv.remove(), 5000);
+    }
+    
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+    function escapeAttr(str) { return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    
+    function startSessionCountdown() {
+        if(timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if(sessionRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert("🔒 SESSION EXPIRED: 71 MINUTES ELAPSED. CONTACT SANDF HIGH COMMAND.");
+                fullSystemZeroise();
+                document.body.innerHTML = '<div style="color:#d15a5a; text-align:center; margin-top:60px; font-size:1.5rem;">🔐 SMU PROTOCOL-6 LOCKED · SESSION TERMINATED 🔐</div>';
+                setTimeout(() => window.close(), 2000);
+            } else {
+                sessionRemaining--;
+                const mins = Math.floor(sessionRemaining / 60);
+                const secs = sessionRemaining % 60;
+                sessionCountdownSpan.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+                if(sessionRemaining < 300) sessionCountdownSpan.classList.add('timer-critical');
+            }
+        }, 1000);
+    }
+    
+    function initRealisticRain() {
+        const rainContainer = document.getElementById('rainContainer');
+        function createDrop() {
+            const droplet = document.createElement('div');
+            droplet.classList.add('rain-droplet');
+            const size = 2 + Math.random() * 6;
+            droplet.style.width = `${size}px`;
+            droplet.style.height = `${size * 2.2}px`;
+            droplet.style.left = `${Math.random() * 100}%`;
+            const duration = 0.9 + Math.random() * 2.2;
+            droplet.style.animationDuration = `${duration}s`;
+            droplet.style.animationDelay = `${Math.random() * 10}s`;
+            droplet.style.opacity = 0.3 + Math.random() * 0.6;
+            rainContainer.appendChild(droplet);
+            // splash effect on "impact" simulation
+            setTimeout(() => {
+                if(droplet.parentNode) {
+                    const splash = document.createElement('div');
+                    splash.classList.add('rain-splash');
+                    splash.style.left = droplet.style.left;
+                    splash.style.top = '95%';
+                    splash.style.width = `${size * 3}px`;
+                    splash.style.height = `${size * 2}px`;
+                    rainContainer.appendChild(splash);
+                    setTimeout(() => splash.remove(), 500);
+                    droplet.remove();
+                }
+            }, duration * 1000 - 50);
+        }
+        setInterval(() => { for(let i=0;i<18;i++) createDrop(); }, 180);
+        setInterval(() => { for(let i=0;i<8;i++) createDrop(); }, 70);
+    }
+    
+    document.getElementById('encryptWalkieBtn').addEventListener('click', async () => {
+        try {
+            const plain = walkieMessageInput.value.trim();
+            if(!plain) throw new Error("No message to encrypt");
+            const cipher = await aesEncrypt(plain);
+            cipherWalkieOut.innerText = cipher;
+            addSystemMessage("Message encrypted. Click SEND to transmit.");
+        } catch(e) { cipherWalkieOut.innerText = `ERROR: ${e.message}`; }
+    });
+    document.getElementById('sendWalkieBtn').addEventListener('click', sendSecureTransmission);
+    document.getElementById('clearWalkieBtn').addEventListener('click', () => { walkieMessageInput.value = ''; cipherWalkieOut.innerText = '[cleared]'; });
+    document.getElementById('refreshFeedWalkieBtn').addEventListener('click', () => loadSecureFeed());
+    document.getElementById('clearLocalFeedBtn').addEventListener('click', () => { chatFeedDiv.innerHTML = '<div class="chat-message">[local feed cleared]</div>'; });
+    document.getElementById('emergencyZeroiseBtn').addEventListener('click', fullSystemZeroise);
+    document.getElementById('rotateAesKeyBtn').addEventListener('click', async () => { await generateFreshAesKey(); addSystemMessage("AES-256 session key rotated."); });
+    document.getElementById('genRsaWalkieBtn').addEventListener('click', async () => { await generateRsaWalkie(); addSystemMessage("New RSA-2048 keypair generated."); });
+    document.getElementById('exportPubWalkieBtn').addEventListener('click', async () => {
+        if(!rsaKeyPairWalkie.publicKey) { addSystemMessage("No RSA keypair."); return; }
+        const exported = await crypto.subtle.exportKey('spki', rsaKeyPairWalkie.publicKey);
+        const b64 = btoa(String.fromCharCode(...new Uint8Array(exported)));
+        navigator.clipboard.writeText(b64);
+        addSystemMessage("RSA public key (SPKI) copied to clipboard.");
+    });
+    document.getElementById('importPeerKeyBtn').addEventListener('click', async () => {
+        try {
+            const clip = await navigator.clipboard.readText();
+            const binary = Uint8Array.from(atob(clip), c=>c.charCodeAt(0));
+            const pub = await crypto.subtle.importKey('spki', binary, { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['encrypt']);
+            peerRsaPublicKey = pub;
+            peerKeyStatusDiv.innerHTML = '✅ Peer RSA key loaded (RSA envelope ready).';
+            addSystemMessage("Peer public key imported.");
+        } catch(e) { addSystemMessage(`Import failed: ${e.message}`); }
+    });
+    document.getElementById('testDecryptClipboardBtn').addEventListener('click', async () => {
+        try {
+            const clipText = await navigator.clipboard.readText();
+            const decrypted = await aesDecrypt(clipText);
+            cipherWalkieOut.innerText = `🔓 DECRYPTED: ${decrypted}`;
+            addSystemMessage("Clipboard ciphertext decrypted.");
+        } catch(e) { cipherWalkieOut.innerText = `DECRYPT ERROR: ${e.message}`; }
+    });
+    document.getElementById('showKeyFingerprintBtn').addEventListener('click', () => {
+        if(aesKeyBase64) addSystemMessage(`Current AES fingerprint: ${aesKeyBase64.substring(0,16)}...`);
+        else addSystemMessage("No AES key active.");
+    });
+    document.getElementById('emergencyAlertBtn').addEventListener('click', async () => {
+        try {
+            const alertMsg = `🚨 EMERGENCY ALERT from ${codenameInput.value.trim() || "KASEY"} at ${new Date().toISOString()}`;
+            const encrypted = await aesEncrypt(alertMsg);
+            await messagesRef.add({ codename: "🚨 EMERGENCY", payload: encrypted, timeStr: "ALERT", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+            addSystemMessage("Emergency broadcast sent.");
+        } catch(e) { addSystemMessage(`Broadcast failed: ${e.message}`); }
+    });
+    document.getElementById('newCryptoSessionBtn').addEventListener('click', async () => {
+        await generateFreshAesKey();
+        await generateRsaWalkie();
+        addSystemMessage("New cryptographic session established: fresh AES-256 + RSA-2048.");
+    });
+    
+    function updateLiveClock() { document.getElementById('liveTime').innerText = new Date().toISOString().slice(11,19)+'Z'; }
+    setInterval(updateLiveClock, 500); updateLiveClock();
+    
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => { if(e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'))) { e.preventDefault(); alert("ACCESS DENIED - SMU PROTOCOL-6"); window.close(); } });
+    setInterval(() => { if(window.outerHeight - window.innerHeight > 200) window.close(); }, 1800);
+    
+    (async function init() {
+        await generateFreshAesKey();
+        await generateRsaWalkie();
+        loadSecureFeed();
+        startSessionCountdown();
+        initRealisticRain();
+        addSystemMessage("🔊 SMU PROTOCOL-6 ACTIVE | WALKIE-TALKIE MODE | REAL AES-256-GCM + RSA-2048");
+    })();
+})();
+
+</script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
