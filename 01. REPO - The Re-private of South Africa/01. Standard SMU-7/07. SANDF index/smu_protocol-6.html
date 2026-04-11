@@ -20,6 +20,10 @@
 
         /* THE STYLING NEVER CHANGES. NO GLOWS. NO SHADOWS. TACTICAL, SOLDIER & SOUTH AFRICAN. THE STYLING NEVER EVER EVER EVER CHANGES. NOT EVEN 1 BIT. NEVER. */
 
+        /* I REALLY LOVE THE RAIN ANIMATION... AND THE WAY IT DROPS ON THE FLOOR. I WANT THE RAIN DROPLETS TO LOOK A LITTLE MORE REALISTIC THOUGH HOWEVER. JUST THAT ONLY... I THINK THAT YOU CAN ASSIST ME WITH THAT. */
+
+        /* LET'S ALSO RENAME THE LIVE SECURE CHANNEL TO SOMETHING ELSE... I DON'T WANT THE WORD CHANNEL TO EXIST ANYWHERE ON THIS PAGE. LET'S GO. LET'S GIVE THE LIVE SECURE CHANNEL A NEW NAME - LET'S GO FOR 'SECURE COMMS' ... YEAH - THAT'S THE NAME - SECURE COMMS. */
+
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         :root {
             --olive-drab: #544b2e;
@@ -38,6 +42,7 @@
         }
 
         body {
+
             background-color: #0a100a;
             background-image: linear-gradient(45deg, var(--grid-alpha) 1px, transparent 1px), linear-gradient(-45deg, var(--grid-alpha) 1px, transparent 1px);
             background-size: 42px 42px;
@@ -47,9 +52,11 @@
             color: #d0ddc2;
             position: relative;
             overflow-x: hidden;
+
         }
 
         .rain-container {
+
             position: fixed;
             top: 0;
             left: 0;
@@ -58,9 +65,11 @@
             pointer-events: none;
             z-index: 1000;
             overflow: hidden;
+
         }
 
         .rain-droplet {
+
             position: absolute;
             background: linear-gradient(135deg, var(--rain-color1), var(--rain-color2));
             border-radius: 0 0 40% 40%;
@@ -68,14 +77,17 @@
             pointer-events: none;
             filter: blur(0.5px);
             box-shadow: 0 0 2px rgba(180, 240, 200, 0.4);
+
         }
 
         .rain-splash {
+
             position: absolute;
             border-radius: 50%;
             background: radial-gradient(circle, var(--splash-alpha), transparent);
             animation: splash 0.5s ease-out forwards;
             pointer-events: none;
+
         }
 
         @keyframes fall {
@@ -90,6 +102,7 @@
         }
 
         .tac-encryptor {
+
             max-width: 1600px;
             width: 100%;
             background: rgba(6, 14, 5, 0.97);
@@ -100,9 +113,11 @@
             box-shadow: 0 8px 28px rgba(0,0,0,0.7);
             position: relative;
             z-index: 2;
+
         }
 
         .watermark {
+
             position: fixed;
             bottom: 12px;
             left: 12px;
@@ -115,6 +130,7 @@
             letter-spacing: 1px;
             pointer-events: none;
             font-weight: bold;
+
         }
 
         .sector-id { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; border-bottom: 2px solid #6f8e5c; padding-bottom: 0.7rem; margin-bottom: 1.6rem; gap: 12px 20px; }
@@ -156,7 +172,7 @@
 
 <div class="noise-overlay"></div>
 
-<div class="watermark">◤ SANDF HIGH COMMAND ◢ | 71 MINUTES</div>
+<div class="watermark">◤ SANDF HIGH COMMAND ◢</div>
 
 <div class="tac-encryptor">
 
@@ -165,7 +181,7 @@
         <div class="op-badge">◥ SMU PROTOCOL-6</div>
 
         <div class="comsec">
-            <button id="emergencyZeroiseBtn" class="danger">💀 ZEROISE ALL</button>
+            <button id="emergencyZeroiseBtn" class="danger">💀 ZEROISE ALL \\ IZITHULELO 1</button>
             <button id="newCryptoSessionBtn">🔄 NEW SESSION (AES+RSA)</button>
             <div class="za-flag"><span>🇿🇦</span><span>BIG-JOE</span></div>
         </div>
@@ -176,6 +192,19 @@
             <div class="ptt-indicator"><span class="status-led"></span> <span>SECURE CHANNEL · LIVE</span></div>
             <div><span class="fingerprint" id="cryptoHealth">A Comprehensive Guide To Cryptography: The Basics</span></div>
         </div>
+
+        <!-- HERE'S WHAT I WANT TO ACHIEVE... I WANT THE SECURE CHANNEL TO BE TEXT MESSAGING ONLY TO MINIMIZE NOISE THROUGH THE WIRE WHEN PACKETS ARE BEING TRANSMITTED. WE MUST ALL THE 6 MAJOR SECURITY GOALS OF CRYPTOGRAPHY ON THE SECURE CHANNEL. THE MESSAGES ARE ALWAYS SENT OUT ENCRYPTED... EVEN THE DATABASE CANNOT READ THEM. NO ONE CAN... IT'S LOCKED AND ENCRYPTED. unintelligible. SO THE 6 GOALS ARE CONFIDENTIALITY, INTEGRTITY, AUTHENTICATION, NON-REPUDIATION, subtlety (covertness), AND AVAILABILITY. LET'S ALSO DO ACCESS CODE AUTHENTICATION FOR EVERY MESSAGE SENT - WE CAN USE ACCESS CODE "1111" FOR NOW. EVERYTHING MUST BE DONE IN THESE SEQUENTIAL STEPS, BEFORE YOU CAN CLICK THE SEND MESSAGE BUTTON. I ALSO WANT provision of undeniable proof of the origin of the data. Text is the most subtle medium. It minimizes noise and reduces the digital footprint, helping to hide the fact that a secret conversation is even taking place. a system, its' data, and its cryptographic services must be accessible to authorized users when needed. A denial-of-service attack, for instance, targets availability, even if the data itself remains confidential and unaltered. -->
+
+        <!-- encryption: The process of transforming readable data (**plaintext**) into an unreadable, scrambled format (**ciphertext**) using a mathematical algorithm and a secret value. decryption: The reverse process of transforming ciphertext back into plaintext using a key. -->
+
+        <!-- key: a secret value (a string of bits) that controls the encryption and decryption process. a fundamental principle of modern cryptography is **Kerckhoffs’s Principle:** a cryptosystem should be secure even if everything about the system, except the key, is public knowledge.* security depends entirely on the secrecy of the key. WITHOUT THE KEY, YOU CAN'T DO NOTHING. LET'S CREATE SEPERATE WINDOWS ON THE SECURE CHANNEL FOR SYMMETRIC CRYPTOGRAPHY... AND THEN ANOTHER WINDOW FOR Asymmetric Cryptography (Public-Key Cryptography). -->
+
+        <!-- FOR SYMMETRIC CRYPTOGRAPHY... LET'S ONLY USE AES - Advanced Encryption Standard (AES)... FOR ASYMMETRIC - LET'S USE *RSA:* One of the first and most widely implemented public-key algorithms.
+    - *Elliptic Curve Cryptography (ECC):* A modern alternative that provides equivalent security with smaller keys, making it more efficient. -->
+
+    <!-- USE HASH FUNCTIONS TO VERIFY INTEGRITY. -->
+
+    <!-- AT THE END OF IT ALL... WITHOUT THE KEY THOUGH, NOTHING WORKS. -->
         
         <div class="key-material" id="keyStatusArea">
             <div><strong>🔑 SYMMETRIC KEY (AES-256-GCM)</strong> <span id="aesFingerprint" class="fingerprint">[GENERATING...]</span></div>
