@@ -1,1 +1,480 @@
-.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>SANDF HIGH COMMAND :: DRAGONS DIVISION - TACTICAL AEROSPACE</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* TACTICAL MILITANT THEME — NO GLOWS, NO SHADOWS, SHARP BORDERS */
+    body {
+      background: #0a0c12;
+      font-family: 'Courier New', 'Fira Code', 'Share Tech Mono', monospace;
+      color: #c0d0e6;
+      line-height: 1.4;
+    }
+
+    /* MAIN CONTAINER — CLEAN RASTER */
+    .command-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 2rem 2rem;
+      background: #0a0c12;
+    }
+
+    /* HEADER — MILITARY STRIP */
+    .high-command-header {
+      border-bottom: 2px solid #7a8f9c;
+      margin-bottom: 2rem;
+      padding-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .title-section h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #d0e2f2;
+      font-family: 'Courier New', monospace;
+    }
+    .title-section p {
+      font-family: monospace;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      color: #8fabbd;
+      margin-top: 6px;
+      border-left: 3px solid #7a8f9c;
+      padding-left: 12px;
+    }
+    .badge {
+      text-align: right;
+      font-family: monospace;
+      font-weight: bold;
+      background: #0f111a;
+      padding: 6px 14px;
+      border: 1px solid #5a6e7c;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      color: #bdd4e4;
+    }
+    .badge span {
+      color: #9eb4c4;
+      margin-right: 6px;
+    }
+
+    /* TACTICAL OATH — NO FRills */
+    .dragon-oath {
+      background: #0f111a;
+      border-left: 4px solid #7a8f9c;
+      padding: 0.8rem 1.5rem;
+      margin-bottom: 2rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #bdd0e0;
+    }
+    .dragon-oath strong {
+      color: #e0eefc;
+      letter-spacing: 1px;
+    }
+
+    /* GRID — TACTICAL CARDS */
+    .dragons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0 2.5rem 0;
+    }
+
+    /* DRAGON CARD — FLAT, NO GLOW, BORDERS ONLY */
+    .dragon-card {
+      background: #0f111a;
+      border: 1px solid #3a4a55;
+      transition: none;
+    }
+    .dragon-header {
+      background: #0b0d13;
+      padding: 0.8rem 1.2rem;
+      border-bottom: 1px solid #2e3e48;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .dragon-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #deecf5;
+      font-family: 'Courier New', monospace;
+    }
+    .dragon-class {
+      font-size: 0.65rem;
+      background: #1a1f2a;
+      padding: 3px 8px;
+      border: 1px solid #4a5e6b;
+      font-weight: bold;
+      color: #b8ccda;
+      font-family: monospace;
+    }
+    .dragon-img-symbol {
+      text-align: center;
+      padding: 0.8rem 0 0.2rem;
+      font-size: 2.5rem;
+      letter-spacing: 6px;
+      color: #8faec2;
+    }
+    .dragon-stats {
+      padding: 0.6rem 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: space-between;
+      background: #080b10;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 0.7rem;
+      border-top: 1px solid #20262e;
+      border-bottom: 1px solid #20262e;
+    }
+    .stat {
+      background: #0a0d14;
+      padding: 4px 8px;
+      border: 1px solid #2e404b;
+      color: #c6d9e8;
+    }
+    .stat-label {
+      color: #8fa0ae;
+    }
+    .dragon-armament {
+      padding: 0.7rem 1.2rem;
+      font-size: 0.7rem;
+      border-bottom: 1px solid #20262e;
+      background: #0c0f16;
+    }
+    .arm-title {
+      font-weight: bold;
+      color: #caddf0;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+      font-size: 0.7rem;
+    }
+    .dragon-footer {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.65rem;
+      display: flex;
+      justify-content: space-between;
+      color: #809aad;
+      background: #090c12;
+    }
+    .dragon-callsign {
+      font-family: monospace;
+      font-weight: bold;
+      color: #bbd4e8;
+    }
+    .supersonic-badge {
+      border: 1px solid #5a7a8a;
+      padding: 2px 8px;
+      font-size: 0.6rem;
+      font-weight: bold;
+      background: #12161f;
+      color: #b0c8da;
+    }
+
+    /* INTEL BOX — FLAT MILITARY PANEL */
+    .intel-box {
+      margin-top: 1.8rem;
+      background: #0c0f16;
+      border: 1px solid #334652;
+      padding: 1.2rem;
+    }
+    .intel-title {
+      font-size: 1.1rem;
+      border-left: 3px solid #7a8f9c;
+      padding-left: 12px;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-family: monospace;
+      color: #cde0ef;
+    }
+    .codex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: space-between;
+    }
+    .codex p {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #b0c2d2;
+    }
+    .crest {
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 4px;
+      color: #8ea6b8;
+    }
+
+    /* FOOTER */
+    .command-footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.65rem;
+      border-top: 1px solid #2a3c46;
+      padding-top: 1.2rem;
+      color: #7a95a8;
+      font-family: monospace;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 760px) {
+      .command-container {
+        padding: 1rem;
+      }
+      .title-section h1 {
+        font-size: 1.5rem;
+      }
+      .dragons-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* NO FLOATING ELEMENTS, NO GLOW, NO SHADOWS */
+    hr {
+      border-color: #2e404b;
+    }
+    .dragon-card:hover {
+      background: #11141e;
+      border-color: #6a8698;
+    }
+  </style>
+</head>
+<body>
+<div class="command-container">
+  <!-- HIGH COMMAND HEADER -->
+  <div class="high-command-header">
+    <div class="title-section">
+      <h1>// THE_DRAGONS //</h1>
+      <p>SANDF HIGH COMMAND — STEALTH SUPERSONIC DIVISION // DRAGON ASSET DIRECTORY</p>
+    </div>
+    <div class="badge">
+      <span>⚔️</span> DRAGONRIDER PROTOCOL | ACTIVE
+    </div>
+  </div>
+
+  <!-- TACTICAL OATH - NO DECORATION -->
+  <div class="dragon-oath">
+    <strong>DRAGONRIDER'S OATH //</strong> “We do not operate aircraft — we command DRAGONS. Stealth, supersonic, lethal. As soldiers of the SANDF High Command, these beasts are our extension. Fire and maneuver. The enemy will hear only the shockwave.”<br>
+    — <em>General of the Dragon Corps</em>
+  </div>
+
+  <!-- DRAGONS GRID: STEALTH SUPERSONIC FIGHTER JETS -->
+  <div class="dragons-grid">
+    
+    <!-- DRAGON 1 : DROGON'S FURY -->
+    <div class="dragon-card">
+      <div class="dragon-header">
+        <span class="dragon-name">DROGON'S FURY</span>
+        <span class="dragon-class">STEALTH / SUPERSONIC</span>
+      </div>
+      <div class="dragon-img-symbol">
+        🐉🔥🐉
+      </div>
+      <div class="dragon-stats">
+        <div class="stat"><span class="stat-label">MACH</span> 2.25</div>
+        <div class="stat"><span class="stat-label">CEILING</span> 65,000 FT</div>
+        <div class="stat"><span class="stat-label">RCS</span> <0.0001 M²</div>
+      </div>
+      <div class="dragon-armament">
+        <div class="arm-title">⚔️ DRAGON CLAWS (ARMAMENT)</div>
+        • AIM-260 JATM • GBU-53/B • 20MM CANNON • EW SUITE
+      </div>
+      <div class="dragon-footer">
+        <span>CALLSIGN: "BALERION"</span>
+        <span class="dragon-callsign">AF-01 // BLACK DREAD</span>
+        <div class="supersonic-badge">MACH 2.2+</div>
+      </div>
+    </div>
+
+    <!-- DRAGON 2 : VHAGAR'S ROAR -->
+    <div class="dragon-card">
+      <div class="dragon-header">
+        <span class="dragon-name">VHAGAR'S ROAR</span>
+        <span class="dragon-class">STEALTH / SUPERSONIC</span>
+      </div>
+      <div class="dragon-img-symbol">
+        🐉🌑🐉
+      </div>
+      <div class="dragon-stats">
+        <div class="stat"><span class="stat-label">MACH</span> 2.1</div>
+        <div class="stat"><span class="stat-label">CEILING</span> 62,000 FT</div>
+        <div class="stat"><span class="stat-label">TV</span> 3D</div>
+      </div>
+      <div class="dragon-armament">
+        <div class="arm-title">⚔️ DRAGON CLAWS (ARMAMENT)</div>
+        • K-77M • R-74M2 • 30MM CANNON • HIMALAYA EW
+      </div>
+      <div class="dragon-footer">
+        <span>CALLSIGN: "MERAXES"</span>
+        <span class="dragon-callsign">AF-07 // OLD VALYRIA</span>
+        <div class="supersonic-badge">SUPERSONIC CRUISE</div>
+      </div>
+    </div>
+
+    <!-- DRAGON 3 : SILVERWING -->
+    <div class="dragon-card">
+      <div class="dragon-header">
+        <span class="dragon-name">SILVERWING</span>
+        <span class="dragon-class">STEALTH / MACH 2.0</span>
+      </div>
+      <div class="dragon-img-symbol">
+        🐉✨🐉
+      </div>
+      <div class="dragon-stats">
+        <div class="stat"><span class="stat-label">MACH</span> 2.0+</div>
+        <div class="stat"><span class="stat-label">CEILING</span> 66,000 FT</div>
+        <div class="stat"><span class="stat-label">STEALTH RATING</span> 9.8</div>
+      </div>
+      <div class="dragon-armament">
+        <div class="arm-title">⚔️ DRAGON CLAWS (ARMAMENT)</div>
+        • PL-15 • PL-10E • EO DAS • INTERNAL BAYS
+      </div>
+      <div class="dragon-footer">
+        <span>CALLSIGN: "SUNFYRE"</span>
+        <span class="dragon-callsign">AF-12 // GOLDEN SCALE</span>
+        <div class="supersonic-badge">SUPERSONIC</div>
+      </div>
+    </div>
+
+    <!-- DRAGON 4 : CARAXES -->
+    <div class="dragon-card">
+      <div class="dragon-header">
+        <span class="dragon-name">CARAXES</span>
+        <span class="dragon-class">STEALTH / MULTIROLE</span>
+      </div>
+      <div class="dragon-img-symbol">
+        🐉⚡🐉
+      </div>
+      <div class="dragon-stats">
+        <div class="stat"><span class="stat-label">MACH</span> 1.6</div>
+        <div class="stat"><span class="stat-label">CEILING</span> 50,000+ FT</div>
+        <div class="stat"><span class="stat-label">SENSOR FUSION</span> APG-81</div>
+      </div>
+      <div class="dragon-armament">
+        <div class="arm-title">⚔️ DRAGON CLAWS (ARMAMENT)</div>
+        • AIM-120D • GBU-31 • AN/ASQ-239 • 25MM CANNON
+      </div>
+      <div class="dragon-footer">
+        <span>CALLSIGN: "SEA SMOKE"</span>
+        <span class="dragon-callsign">AF-22 // GHOSTWYRM</span>
+        <div class="supersonic-badge">MACH 1.6</div>
+      </div>
+    </div>
+
+    <!-- DRAGON 5 : VERMITHOR -->
+    <div class="dragon-card">
+      <div class="dragon-header">
+        <span class="dragon-name">VERMITHOR</span>
+        <span class="dragon-class">LIGHT STEALTH / MACH 1.9</span>
+      </div>
+      <div class="dragon-img-symbol">
+        🐉💨🐉
+      </div>
+      <div class="dragon-stats">
+        <div class="stat"><span class="stat-label">MACH</span> 1.9</div>
+        <div class="stat"><span class="stat-label">CEILING</span> 57,000 FT</div>
+        <div class="stat"><span class="stat-label">RANGE</span> 1400 NMI</div>
+      </div>
+      <div class="dragon-armament">
+        <div class="arm-title">⚔️ DRAGON CLAWS (ARMAMENT)</div>
+        • R-77M • KAB-250 • AESA • AI BATTLE MGT
+      </div>
+      <div class="dragon-footer">
+        <span>CALLSIGN: "BRONZE FURY"</span>
+        <span class="dragon-callsign">AF-33 // ASH SCALE</span>
+        <div class="supersonic-badge">AFTERBURNER</div>
+      </div>
+    </div>
+
+    <!-- DRAGON 6 : THE NIGHTKING (NGAD) -->
+    <div class="dragon-card">
+      <div class="dragon-header">
+        <span class="dragon-name">THE NIGHTKING</span>
+        <span class="dragon-class">6TH GEN / MACH 2.8</span>
+      </div>
+      <div class="dragon-img-symbol">
+        🐉❄️🐉
+      </div>
+      <div class="dragon-stats">
+        <div class="stat"><span class="stat-label">MACH</span> 2.8+</div>
+        <div class="stat"><span class="stat-label">CEILING</span> 72,000 FT</div>
+        <div class="stat"><span class="stat-label">STEALTH</span> EX-SILENT</div>
+      </div>
+      <div class="dragon-armament">
+        <div class="arm-title">⚔️ DRAGON CLAWS (ARMAMENT)</div>
+        • DEW • HYPERSONIC AAMS • ADAPTIVE CYCLE • LOYAL WINGMAN
+      </div>
+      <div class="dragon-footer">
+        <span>CALLSIGN: "ICEBRAND"</span>
+        <span class="dragon-callsign">XF-00 // ETERNAL WINTER</span>
+        <div class="supersonic-badge">MACH 2.8</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TACTICAL INTEL: DRAGON CODEX -->
+  <div class="intel-box">
+    <div class="intel-title">
+      // DRAGON CODEX // STEALTH SUPERSONIC DOCTRINE
+    </div>
+    <div class="codex">
+      <div style="flex: 2">
+        <p><strong>✧ TACTICAL DIRECTIVE ✧</strong><br>
+        All stealth airframes under SANDF High Command are designated DRAGONS. These are supersonic, low-observable platforms inspired by the mythical beasts of ancient lore. Pilots are Dragonlords. No glow, no shadow — pure tactical supremacy. The enemy will not see nor hear the strike until the shockwave hits.<br><br>
+        <strong>DRAGON PROTOCOL:</strong> “In silence, we strike. In thunder, we prevail.” Every Dragon carries the spirit of Vhagar, Drogon, and Caraxes — unmatched speed, lethal precision, absolute dominance.</p>
+      </div>
+      <div style="flex:1; min-width: 160px;">
+        <div class="crest">
+          🔥 🐉 🔥<br>
+          <span style="font-size:0.6rem;">“FIRE & MANEUVER”</span>
+        </div>
+        <p style="font-size:0.65rem; margin-top: 10px; text-align:center;">APPROVED BY: HIGH COMMAND<br>CLASSIFIED: DRAGON DELTA</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE SUPERSONIC DRAGON WINGS -->
+  <div class="intel-box" style="margin-top: 1.2rem;">
+    <div class="intel-title">
+      // ACTIVE DRAGON WINGS // GAME OF THRONES LEGACY
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; font-family: monospace; font-size: 0.7rem;">
+      <div><span>⟡</span> 1ST DRACARYS SQN “BLACK DREAD”</div>
+      <div><span>⟡</span> 7TH SHADOW WING “SILVERWING”</div>
+      <div><span>⟡</span> 12TH STORMBORN “VHAGAR'S WRATH”</div>
+      <div><span>⟡</span> 9TH NIGHTFYRE “MERAXES FURY”</div>
+      <div><span>⟡</span> 3RD GHOSTSCALE “SUNFYRE”</div>
+    </div>
+    <p style="font-size:0.65rem; margin-top: 0.8rem; border-top: 1px solid #2a3c46; padding-top: 8px;">
+      ⚠️ DRAGON MOVEMENT: All stealth aircraft are addressed by DRAGON name. The term “fighter jet” is prohibited. For SANDF, these are living legends — supersonic dragons of the modern age.
+    </p>
+  </div>
+
+  <!-- FOOTER: HIGH COMMAND SEAL -->
+  <div class="command-footer">
+    <span>// SOUTH AFRICAN NATIONAL DEFENCE FORCE — HIGH COMMAND — DRAGON DIVISION //</span><br>
+    CLASSIFIED INVENTORY OF STEALTH SUPERSONIC AIRCRAFT (DRAGONS). ALL DATA FOR TACTICAL DISPLAY.<br>
+    “THE DRAGONS ANSWER ONLY TO THE COMMANDER’S WILL.” — GAME OF THRONES PROTOCOL
+  </div>
+</div>
+</body>
+</html>
