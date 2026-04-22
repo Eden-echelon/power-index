@@ -17,13 +17,16 @@
     <style>
 
         * {
+        
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             user-select: none;
+            
         }
 
         :root {
+        
             --mil-red: #c41e0f;
             --mil-red-bright: #ff3a28;
             --radar-sweep: rgba(196, 30, 15, 0.85);
@@ -32,9 +35,11 @@
             --text-primary: #eef5ff;
             --text-secondary: #ffcfaa;
             --grid-color: rgba(196, 30, 15, 0.3);
+            
         }
 
         body {
+        
             min-height: 100vh;
             background: #010103;
             font-family: 'Share Tech Mono', 'Courier New', 'Fira Code', monospace;
@@ -42,9 +47,11 @@
             overflow-y: auto;
             color: var(--text-primary);
             position: relative;
+            
         }
 
         .radar-background {
+        
             position: fixed;
             top: 0;
             left: 0;
@@ -53,9 +60,11 @@
             z-index: 0;
             background: radial-gradient(circle at 30% 40%, #0a0508 0%, #010001 100%);
             overflow: hidden;
+            
         }
 
         .radar-grid {
+        
             position: absolute;
             top: 50%;
             left: 50%;
@@ -70,9 +79,11 @@
                 rgba(196, 30, 15, 0.25) 142px);
             pointer-events: none;
             z-index: 1;
+            
         }
 
         .radar-bearing {
+        
             position: absolute;
             top: 50%;
             left: 50%;
@@ -82,8 +93,11 @@
             transform: translate(-50%, -50%) rotate(0deg);
             pointer-events: none;
             z-index: 2;
+            
         }
+        
         .radar-bearing-vertical {
+        
             position: absolute;
             top: 50%;
             left: 50%;
@@ -93,9 +107,11 @@
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 2;
+            
         }
 
         .radar-scanner {
+        
             position: absolute;
             top: 50%;
             left: 50%;
@@ -116,6 +132,7 @@
         }
 
         .radar-pulse {
+        
             position: absolute;
             top: 50%;
             left: 50%;
@@ -127,14 +144,17 @@
             pointer-events: none;
             z-index: 4;
             animation: pulseCenter 1.2s ease-out infinite;
+            
         }
 
         @keyframes pulseCenter {
+        
             0% { width: 20px; height: 20px; opacity: 0.9; }
             100% { width: 180px; height: 180px; opacity: 0; }
         }
 
         .bogie {
+        
             position: absolute;
             width: 6px;
             height: 6px;
@@ -145,6 +165,7 @@
             z-index: 5;
             transition: all 0.02s linear;
             animation: bogieFlicker 0.4s ease-in-out infinite alternate;
+            
         }
 
         @keyframes bogieFlicker {
@@ -153,6 +174,7 @@
         }
 
         .radar-static {
+        
             position: absolute;
             top: 0;
             left: 0;
@@ -163,9 +185,11 @@
             pointer-events: none;
             z-index: 1;
             opacity: 0.35;
+            
         }
 
         .command-interface {
+        
             position: relative;
             z-index: 50;
             max-width: 1400px;
@@ -177,49 +201,71 @@
             -webkit-backdrop-filter: blur(12px);
             border-left: 1px solid var(--glass-border);
             border-right: 1px solid var(--glass-border);
+            
         }
 
         .avionics-header {
+        
             text-align: center;
             padding: 0.2rem 0 0.9rem;
             border-bottom: 2px solid var(--mil-red);
             margin-bottom: 2rem;
+            
         }
+        
         .smu-designator {
+        
             font-size: 2.4rem;
             letter-spacing: 0.45em;
             font-weight: 800;
             color: var(--mil-red);
             text-transform: uppercase;
+            
         }
+        
         .avionics-sub {
+        
             font-size: 0.7rem;
             letter-spacing: 0.25em;
             color: var(--text-secondary);
             margin-top: 0.4rem;
+            
         }
 
         .teams-avionics {
+        
             margin: 1.2rem 0 2rem;
+            
         }
+        
         .section-commander {
+        
             margin-bottom: 1.2rem;
             padding-left: 0.8rem;
             border-left: 4px solid var(--mil-red);
+            
         }
+        
         .section-commander h2 {
+        
             font-size: 0.95rem;
             letter-spacing: 2.5px;
             color: var(--mil-red);
             font-weight: 600;
+            
         }
+        
         .stealth-roster {
+        
             display: flex;
             flex-wrap: wrap;
             gap: 1.8rem;
             justify-content: center;
+            
         }
+        
         .stealth-card {
+        
             background: rgba(12, 14, 20, 0.75);
             border: 1px solid var(--mil-red);
             border-radius: 1.2rem;
@@ -229,45 +275,68 @@
             cursor: pointer;
             backdrop-filter: blur(2px);
             transition: 0.08s linear;
+            
         }
+        
         .stealth-card:hover {
+        
             background: rgba(196, 30, 15, 0.18);
             border-color: var(--mil-red-bright);
+            
         }
+        
         .card-rank {
+        
             font-size: 0.7rem;
             color: var(--mil-red);
             margin-bottom: 0.4rem;
+            
         }
+        
         .team-designation {
+        
             font-size: 1.55rem;
             font-weight: 700;
             color: var(--mil-red);
+            
         }
+        
         .star-system {
+        
             font-size: 1rem;
             letter-spacing: 0.2rem;
             color: #FFD966;
             margin: 0.45rem 0;
+            
         }
+        
         .commander-data {
+        
             font-size: 0.75rem;
             margin: 0.3rem 0;
             color: #ffcfb0;
+            
         }
+        
         .spec-tags {
+        
             display: flex;
             flex-wrap: wrap;
             gap: 0.3rem;
             margin: 0.5rem 0;
+            
         }
+        
         .spec-tag-modern {
+        
             background: rgba(196, 30, 15, 0.2);
             border: 0.5px solid rgba(196, 30, 15, 0.7);
             border-radius: 20px;
             padding: 0.2rem 0.8rem;
             font-size: 0.6rem;
+            
         }
+        
         .card-metrics-modern {
             margin-top: 0.7rem;
             font-size: 0.65rem;
@@ -306,16 +375,23 @@
             backdrop-filter: blur(2px);
             transition: 0.05s linear;
         }
+        
         .avionics-btn:hover {
+        
             background: rgba(196, 30, 15, 0.35);
             border-color: var(--mil-red-bright);
             color: #ffccaa;
+            
         }
+        
         .avionics-btn:active {
+        
             transform: scale(0.97);
+            
         }
 
         .status-modern {
+        
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -325,13 +401,18 @@
             background: rgba(0, 0, 0, 0.55);
             border-radius: 1rem;
             border: 0.5px solid rgba(196,30,15,0.6);
+            
         }
+        
         .status-item-modern {
+        
             font-size: 0.68rem;
             color: #ffcfaf;
+            
         }
 
         .session-timer {
+        
             position: fixed;
             top: 20px;
             right: 24px;
@@ -346,9 +427,11 @@
             backdrop-filter: blur(8px);
             font-family: monospace;
             letter-spacing: 1px;
+            
         }
 
         .footer-avionics {
+        
             margin-top: 2rem;
             padding-top: 1rem;
             border-top: 1px solid var(--mil-red);
@@ -358,9 +441,11 @@
             gap: 0.4rem;
             font-size: 0.6rem;
             color: #ccb69a;
+            
         }
 
         .scroll-nav {
+        
             position: fixed;
             right: 20px;
             top: 50%;
@@ -369,8 +454,11 @@
             flex-direction: column;
             gap: 12px;
             z-index: 300;
+            
         }
+        
         .scroll-nav-btn {
+        
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid var(--mil-red);
             width: 44px;
@@ -380,13 +468,18 @@
             font-size: 1.2rem;
             color: var(--mil-red);
             transition: 0.08s linear;
+            
         }
+        
         .scroll-nav-btn:hover {
+        
             background: rgba(196, 30, 15, 0.4);
             border-color: var(--mil-red-bright);
+            
         }
 
         .emblem-modern {
+        
             position: fixed;
             bottom: 22px;
             right: 22px;
@@ -395,8 +488,11 @@
             z-index: 200;
             pointer-events: none;
             opacity: 0.8;
+            
         }
+        
         .watermark-modern {
+        
             position: fixed;
             bottom: 20px;
             left: 50%;
@@ -406,9 +502,11 @@
             white-space: nowrap;
             font-weight: 500;
             z-index: 200;
+            
         }
 
         .popup-overlay-session {
+        
             position: fixed;
             top: 0;
             left: 0;
@@ -420,25 +518,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            
         }
+        
         .popup-card-session {
+        
             background: #0a0608;
             border: 2px solid var(--mil-red);
             border-radius: 1rem;
             padding: 1.6rem 2rem;
             text-align: center;
             max-width: 380px;
+            
         }
 
         html {
+        
             scroll-behavior: smooth;
+            
         }
 
         @media (max-width: 768px) {
+        
             .command-interface { padding: 1rem; }
             .button-arsenal { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .scroll-nav { right: 8px; }
             .session-timer { top: 12px; right: 12px; font-size: 0.6rem; padding: 4px 10px; }
+            
         }
 
     </style>
@@ -478,21 +584,21 @@
                 </div>
                 <div class="card-metrics-modern">Tier 1</div>
             </div>
+            
             <div class="stealth-card" data-team="team8">
                 <div class="card-rank">#2 · PRESIDENTIAL GUARD</div>
-                <div class="team-designation">TEAM 8 · PROTECTORATE</div>
+                <div class="team-designation">TEAM 8</div>
                 <div class="star-system">★★★★★</div>
-                <div class="commander-data">LCDR JOYSON · 5-STAR GOLD · PRESIDENTIAL DETAIL</div>
+                <div class="commander-data">LCDR JOYSON · <a href="pd.html" style="text-decoration: none;">PRESIDENTIAL DETAIL</a></div>
                 <div class="spec-tags">
                     <span class="spec-tag-modern">CLOSE PROTECTION</span>
                     <span class="spec-tag-modern">SMU-7 ASSET</span>
                 </div>
-                <div class="card-metrics-modern">🛡 REACTION: 0.38s | FORTIFIED PERIMETER</div>
+                <div class="card-metrics-modern">Tier 1</div>
             </div>
         </div>
     </div>
 
-    <!-- ACTION GRID - EXTENSIVE -->
     <div class="action-modern">
         <div class="action-header">◈ STEALTH COMMAND MATRIX · DIRECT CONTROL ◈</div>
         <div class="button-arsenal" id="actionGrid">
@@ -538,6 +644,7 @@
 <div class="watermark-modern">◈ SMU-7 // AVIONICS CORE // HOSS ULTIMATE // EDEN CV-1 8-STAR // TEAM 8 PROTECTORATE ◈</div>
 
 <script>
+    
     (function(){
         "use strict";
 
@@ -739,7 +846,7 @@
             card.addEventListener('click', () => {
                 const team = card.getAttribute('data-team');
                 if(team === 'eden') showToast("EDEN CV-1 #1: 8-Star ultimate, HOSS command, avionics integrated");
-                else if(team === 'team8') showToast("TEAM 8 #2: LCDR JOYSON 5-Star Gold, presidential protection detail");
+                else if(team === 'team8') showToast("TEAM 8 #2: LCDR JOYSON, presidential protection detail");
                 else showToast("Asset status: operational");
             });
         });
@@ -770,6 +877,10 @@
 </body>
 
 </html>
+
+
+
+
 
 
 
