@@ -22,6 +22,7 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         :root {
+        
             --olive-drab: #544b2e;
             --field-drab: #4a5d3b;
             --night-vision: #1f3b2c;
@@ -38,6 +39,7 @@
         }
 
         body {
+        
             background-color: #0a100a;
             background-image: linear-gradient(45deg, var(--grid-alpha) 1px, transparent 1px), linear-gradient(-45deg, var(--grid-alpha) 1px, transparent 1px);
             background-size: 42px 42px;
@@ -47,6 +49,7 @@
             color: #d0ddc2;
             position: relative;
             overflow-x: hidden;
+            
         }
 
         .rain-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; overflow: hidden; }
@@ -88,29 +91,43 @@
         .key-status-badge { font-weight: bold; margin-left: 8px; }
         .key-missing { color: #ff8866; background: #3a1a1a; }
         .key-active { color: #b3ffb0; background: #1f351b; }
+        
     </style>
+    
 </head>
+
 <body>
+    
 <div class="rain-container" id="rainContainer"></div>
 <div class="noise-overlay"></div>
-<div class="watermark">◤ SANDF HIGH COMMAND ◢</div>
+
+<div class="watermark">SANDF HIGH COMMAND</div>
+
 <div class="tac-encryptor">
+    
     <div class="sector-id">
+        
         <div class="op-badge">◥ SMU PROTOCOL-6</div>
         <div class="comsec">
+            
             <button id="emergencyZeroiseBtn">💀 ZEROISE ALL</button>
+            
             <button id="newCryptoSessionBtn">🔄 NEW SESSION</button>
+            
             <div class="za-flag"><span>🇿🇦</span><span>BIG-JOE</span></div>
+            
         </div>
+        
     </div>
 
     <div class="walkie-panel">
+        
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 14px;">
-            <div class="ptt-indicator"><span class="status-led"></span> <span>SECURE COMMS · KEY-DRIVEN</span></div>
+            
+            <div class="ptt-indicator"><span class="status-led"></span> <span>SECURE COMMS</span></div>
             <div><span class="fingerprint" id="cryptoHealth">🔴 NO KEYS LOADED</span></div>
         </div>
 
-        <!-- WINDOW 1: SYMMETRIC KEY (AES-256-GCM) - THE MOST IMPORTANT PART -->
         <div class="key-material" style="border-left-color: #ffb347;">
             <div><strong>🔑 WINDOW 1: SYMMETRIC KEY (AES-256-GCM)</strong> 
                 <span id="aesKeyStatusBadge" class="fingerprint key-missing">🔴 MISSING</span>
@@ -123,7 +140,6 @@
             <div id="aesKeyFingerprint" class="fingerprint" style="margin-top: 6px;">⚙️ No AES key loaded. Encryption/Decryption IMPOSSIBLE.</div>
         </div>
 
-        <!-- WINDOW 2: ASYMMETRIC KEY (RSA-2048) for Non-Repudiation -->
         <div class="key-material" style="border-left-color: #86a572;">
             <div><strong>🔓 WINDOW 2: ASYMMETRIC (RSA-2048) · NON-REPUDIATION</strong>
                 <span id="rsaKeyStatusBadge" class="fingerprint key-missing">🔴 MISSING</span>
@@ -137,7 +153,6 @@
             <div id="peerKeyStatus" class="fingerprint" style="margin-top: 4px;">⚙️ No peer public key loaded.</div>
         </div>
 
-        <!-- ACCESS CODE & MESSAGE COMPOSITION -->
         <div class="access-prompt" style="background: #1e2c1a; border-radius: 16px; padding: 10px; margin: 8px 0; border: 1px solid #7f9a6a; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <span>🔐 ACCESS CODE (AUTHENTICATION)</span>
             <input type="password" id="accessCodeInput" maxlength="4" placeholder="1111" value="1111" style="background:#0f180c; border:1px solid #6f8e5c; color:#e2ffcd; padding:6px 12px; border-radius:28px; width:100px;">
@@ -180,6 +195,7 @@
 </div>
 
 <script>
+    
 (function(){
     "use strict";
     // Firebase Config
@@ -301,7 +317,6 @@
         return new TextDecoder().decode(decrypted);
     }
     
-    // ============ RSA FUNCTIONS (Non-Repudiation) ============
     async function generateRsaKeypair() {
         try {
             const keyPair = await crypto.subtle.generateKey({
@@ -340,7 +355,6 @@
         } catch(e) { return false; }
     }
     
-    // ============ SEND TRANSMISSION (All 6 Goals) ============
     async function sendSecureTransmission() {
         try {
             if(!aesCryptoKey) throw new Error("❌ CONFIDENTIALITY VIOLATION: No AES key. Generate/import key first.");
@@ -375,7 +389,6 @@
         } catch(e) { addSystemMessage(`❌ SEND FAIL: ${e.message}`); }
     }
     
-    // ============ FEED & DECRYPTION ============
     function loadSecureFeed() {
         if(feedUnsubscribe) feedUnsubscribe();
         feedUnsubscribe = messagesRef.orderBy('timestamp', 'desc').limit(60).onSnapshot(snapshot => {
@@ -480,8 +493,6 @@
         function drop() { const d = document.createElement('div'); d.className='rain-droplet'; d.style.left=Math.random()*100+'%'; d.style.width=2+Math.random()*5+'px'; d.style.height=(2+Math.random()*5)*2+'px'; d.style.animationDuration=0.7+Math.random()*2+'s'; rc.appendChild(d); setTimeout(()=>{ if(d.parentNode){const s=document.createElement('div'); s.className='rain-splash'; s.style.left=d.style.left; s.style.bottom='0px'; rc.appendChild(s); setTimeout(()=>s.remove(),500); d.remove(); }}, parseInt(d.style.animationDuration)*1000); }
         setInterval(()=>{ for(let i=0;i<12;i++) drop(); }, 150);
     }
-    
-    // Event Listeners
     document.getElementById('generateAesKeyBtn').addEventListener('click', generateAesKey);
     document.getElementById('importAesKeyBtn').addEventListener('click', async () => {
         const importedKey = prompt("🔐 PASTE AES-256 KEY (BASE64):", "");
@@ -562,6 +573,29 @@
         updateKeyUI();
     })();
 })();
+
 </script>
+
 </body>
+
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
