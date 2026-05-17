@@ -1,15 +1,25 @@
 <!DOCTYPE html>
+
 <html lang="en">
+    
 <head>
+    
     <meta charset="UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>SMU PROTOCOL-6 | DUAL CRYPTO WINDOWS</title>
+    
+    <title>SMU PROTOCOL-6</title>
+    
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234a5d3b'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/%3E%3C/svg%3E">
+    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <style>
+        
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         :root {
+            
             --olive-drab: #544b2e;
             --field-drab: #4a5d3b;
             --night-vision: #1f3b2c;
@@ -23,8 +33,11 @@
             --rain-color1: rgba(140, 210, 150, 0.75);
             --rain-color2: rgba(80, 160, 100, 0.55);
             --splash-alpha: rgba(140, 210, 150, 0.4);
+            
         }
+        
         body {
+            
             background-color: #0a100a;
             background-image: linear-gradient(45deg, var(--grid-alpha) 1px, transparent 1px), linear-gradient(-45deg, var(--grid-alpha) 1px, transparent 1px);
             background-size: 42px 42px;
@@ -34,7 +47,9 @@
             color: #d0ddc2;
             position: relative;
             overflow-x: hidden;
+            
         }
+        
         .rain-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; overflow: hidden; }
         .rain-droplet { position: absolute; background: linear-gradient(135deg, var(--rain-color1), var(--rain-color2)); border-radius: 30% 70% 50% 50%; animation: fall linear infinite; pointer-events: none; filter: blur(0.6px); }
         .rain-splash { position: absolute; border-radius: 50%; background: radial-gradient(circle, var(--splash-alpha), transparent 80%); animation: splash 0.48s ease-out forwards; pointer-events: none; }
@@ -78,9 +93,13 @@
         .file-input-label { background: #2f482a; padding: 6px 14px; border-radius: 28px; cursor: pointer; font-size: 0.7rem; font-family: monospace; border: 1px solid #86a572; display: inline-block; }
         .file-input-label:hover { background: #3d5e35; }
         input[type="file"] { display: none; }
+        
     </style>
-</head>
+    
+</head
+    
 <body>
+    
 <div class="rain-container" id="rainContainer"></div>
 <div class="noise-overlay"></div>
 <div class="watermark">🇿🇦 SANDF HIGH COMMAND • SMU PROTOCOL-6</div>
@@ -101,10 +120,8 @@
         <div><span class="fingerprint" id="globalCryptoHealth">🔴 NO KEYS LOADED</span></div>
     </div>
 
-    <!-- DUAL WINDOWS: WINDOW 1 (SYMMETRIC) & WINDOW 2 (ASYMMETRIC) -->
     <div class="dual-windows">
         
-        <!-- WINDOW 1: SYMMETRIC AES-256-GCM -->
         <div class="crypto-window" id="window1">
             <div class="window-header" style="border-left: 6px solid #ffb347;">🔑 WINDOW 1 · SYMMETRIC (AES-256-GCM)</div>
             <div class="window-body">
@@ -146,7 +163,6 @@
             </div>
         </div>
 
-        <!-- WINDOW 2: ASYMMETRIC RSA-2048 -->
         <div class="crypto-window" id="window2">
             <div class="window-header" style="border-left: 6px solid #86a572;">🔓 WINDOW 2 · ASYMMETRIC (RSA-2048)</div>
             <div class="window-body">
@@ -198,18 +214,18 @@
 </div>
 
 <script>
+    
 (function(){
+    
     const firebaseConfig = { apiKey: "AIzaSyD-hhoLpddOoMq1tUlA4SqnwncFnVpaHIQ", authDomain: "eden-4a8d3.firebaseapp.com", projectId: "eden-4a8d3", storageBucket: "eden-4a8d3.firebasestorage.app", messagingSenderId: "421147129483", appId: "1:421147129483:web:9495dfb813fe6195f2c68e" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const msgsWin1 = db.collection("smu_win1_symmetric");
     const msgsWin2 = db.collection("smu_win2_asymmetric");
     
-    // Window 1 State (Symmetric AES)
     let win1AesKey = null;
     let win1AesRawB64 = null;
-    
-    // Window 2 State (Asymmetric RSA + AES for encryption)
+
     let win2AesKey = null;
     let win2AesRawB64 = null;
     let win2RsaKeyPair = { privateKey: null, publicKey: null };
@@ -254,7 +270,6 @@
         URL.revokeObjectURL(link.href);
     }
     
-    // ========== WINDOW 1: AES SYMMETRIC ==========
     async function win1GenAes() {
         const raw = crypto.getRandomValues(new Uint8Array(32));
         const key = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, true, ['encrypt', 'decrypt']);
@@ -383,7 +398,6 @@
         });
     }
     
-    // ========== WINDOW 2: ASYMMETRIC RSA + AES ==========
     async function win2GenRsa() {
         const pair = await crypto.subtle.generateKey({ name: 'RSA-PSS', modulusLength: 2048, publicExponent: new Uint8Array([1,0,1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
         win2RsaKeyPair = pair;
@@ -394,7 +408,6 @@
         document.getElementById('win2RsaBadge').className = "fingerprint key-active";
         document.getElementById('win2RsaBadge').innerHTML = "🟢 RSA ACTIVE";
         
-        // Generate AES key for window 2 encryption
         const rawAes = crypto.getRandomValues(new Uint8Array(32));
         win2AesKey = await crypto.subtle.importKey('raw', rawAes, { name: 'AES-GCM' }, true, ['encrypt', 'decrypt']);
         win2AesRawB64 = btoa(String.fromCharCode(...rawAes));
@@ -548,7 +561,6 @@
         addSystemMessage('win2Feed', "💀 ZEROISE: All keys wiped from memory.");
     }
     
-    // File input handlers
     function createFileInput(callback) {
         const input = document.createElement('input');
         input.type = 'file';
@@ -557,7 +569,6 @@
         input.click();
     }
     
-    // Event bindings
     document.querySelector('.win1-gen-key').addEventListener('click', win1GenAes);
     document.querySelector('.win1-import-key').addEventListener('click', () => createFileInput(win1ImportKeyFromFile));
     document.querySelector('.win1-export-key').addEventListener('click', win1ExportKey);
@@ -608,6 +619,77 @@
     addSystemMessage('win2Feed', "🔐 SMU P-6 READY | Step 1: GENERATE RSA keypair → EXPORT public key as .txt → SHARE with peer");
     updateGlobalHealth();
 })();
+    
 </script>
+    
 </body>
+    
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
