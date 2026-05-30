@@ -1,888 +1,505 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <link rel="icon" type="image/png" href="02. presets/images/SANDF_emblem.svg.png">
-    
-    <!-- I WANT A PREVENTION OF SCREENSHOTS AND SNAPS. NICE WORK ON THE CURRENT SECURITY. SHOW LIVE WEATHER ON THE HEADER AS WELL WITH THE LIVE TIME ACCORDING TO WHERE YOU ARE AT THAT SPECIFIC MOMENT. ALONG WITH THE DATE AS WELL. I REALLY LOVE THE CURRENT STYLING. LET'S NOT CHANGE IT - LET'S KEEP IT AS IS. -->
-
-    <style>
-
-        * {
-
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-
-        }
-
-        :root {
-
-            --za-green: #007a4d;
-            --za-gold: #ffb81c;
-            --za-red: #de3831;
-            --za-blue: #002b7f;
-            --dod-charcoal: #0a0f1a;
-            --dod-steel: #1a2a32;
-            --mil-camo: #2c3e2b;
-            --hud-cyan: #0ae0ff;
-            --glass-bg: rgba(5, 12, 20, 0.92);
-            --terminal-bg: #021016e6;
-
-        }
-
-        body {
-
-            font-family: 'Courier New', 'Share Tech Mono', 'Orbitron', monospace;
-            background: #03050b;
-            color: #eef5ff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-
-        }
-
-        .patriotic-backdrop {
-
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.7), rgba(0,0,0,0.9));
-
-        }
-
-        .patriotic-backdrop::after {
-
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: url('02. presets/images/RSA_Flag1.jpg') center/cover no-repeat;
-            opacity: 0.12;
-            animation: slowDrift 40s infinite alternate;
-
-        }
-
-        @keyframes slowDrift {
-
-            0% { transform: scale(1) translateX(0); opacity: 0.1; }
-            100% { transform: scale(1.1) translateX(-1.8%); opacity: 0.2; }
-
-        }
-
-        .loader-overlord {
-
-            position: fixed;
-            inset: 0;
-            background: #000000;
-            z-index: 20000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(12px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-
-        }
-
-        .loader-content {
-
-            text-align: center;
-            border: 2px solid var(--za-gold);
-            padding: 2rem 3rem;
-            background: #030303dd;
-
-        }
-
-        .spinner-emblem {
-
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 20px;
-            background: url('presets/images/SANDF_emblem.svg.png') center/contain no-repeat;
-            animation: emblemSpin 1s infinite linear;
-
-        }
-
-        @keyframes emblemSpin { to { transform: rotate(360deg); } }
-
-        .command-bar {
-
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 12px 5%;
-            background: rgba(0, 0, 0, 0.96);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid var(--za-gold);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 5000;
-            flex-wrap: wrap;
-            gap: 12px;
-
-        }
-
-        .operator-badge {
-
-            font-weight: 800;
-            background: #000000aa;
-            padding: 4px 18px;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-
-        }
-
-        #sys-status-live {
-
-            font-weight: 900;
-            color: var(--za-gold);
-            font-family: monospace;
-
-        }
-
-        #clock-tactical {
-
-            background: #11161f;
-            padding: 5px 20px;
-            border: 1px solid var(--za-gold);
-            font-weight: bold;
-            font-family: monospace;
-            letter-spacing: 1px;
-
-        }
-
-        #auth-gate {
-
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            background: radial-gradient(circle at center, #01050e, #000000);
-            backdrop-filter: blur(8px);
-
-        }
-        
-        .gate-card {
-
-            background: rgba(0, 0, 0, 0.97);
-            backdrop-filter: blur(24px);
-            border: 2px solid var(--za-gold);
-            width: 90%;
-            max-width: 540px;
-            padding: 2.2rem 2rem 2.8rem;
-            text-align: center;
-
-        }
-
-        .pin-mil-input {
-
-            width: 100%;
-            background: #0a121f;
-            border: 2px solid var(--za-green);
-            padding: 16px;
-            font-size: 2rem;
-            letter-spacing: 12px;
-            text-align: center;
-            color: var(--za-gold);
-            font-weight: bold;
-            margin: 20px 0;
-            font-family: monospace;
-
-        }
-
-        .btn-auth {
-
-            background: var(--za-green);
-            width: 100%;
-            padding: 16px;
-            font-weight: 900;
-            font-size: 1.2rem;
-            border: none;
-            letter-spacing: 3px;
-            transition: 0.05s linear;
-            cursor: pointer;
-            color: white;
-
-        }
-
-        .btn-auth:active { transform: scale(0.97); background: #00995c; }
-
-        #hq-main {
-
-            max-width: 1400px;
-            margin: 130px auto 60px;
-            padding: 1.5rem;
-            position: relative;
-            z-index: 100;
-
-        }
-
-        .glass-panel {
-
-            background: var(--glass-bg);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255,184,28,0.5);
-            border-radius: 8px;
-            padding: 1.8rem;
-
-        }
-
-        .mil-folder {
-
-            margin: 18px 0;
-            background: rgba(0, 0, 0, 0.6);
-
-        }
-
-        .folder-header {
-
-            padding: 16px 24px;
-            background: rgba(0, 25, 35, 0.85);
-            display: flex;
-            justify-content: space-between;
-            cursor: pointer;
-            font-weight: bold;
-            letter-spacing: 1px;
-            transition: 0.1s;
-
-        }
-
-        .folder-header:hover { background: #1e3a42cc; }
-        .folder-body { display: none; padding: 20px 24px; background: #030f1aee; }
-        .mil-folder.open > .folder-body { display: block; }
-        .folder-arrow { transition: 0.2s; color: var(--za-gold); }
-        .mil-folder.open > .folder-header .folder-arrow { transform: rotate(90deg); }
-
-        .rank-arsenal { display: flex; flex-direction: column; gap: 24px; margin: 20px 0; }
-        .rank-plate {
-            background: #02101ad9;
-            border: 1px solid var(--za-gold);
-            padding: 20px;
-            transition: 0.08s linear;
-        }
-
-        .rank-title-click {
-
-            font-size: 1.7rem;
-            font-weight: 900;
-            color: var(--za-gold);
-            cursor: pointer;
-            display: inline-block;
-            border-bottom: 3px solid var(--za-red);
-            width: 100%;
-
-        }
-
-        .star-power { font-size: 1.6rem; letter-spacing: 4px; margin: 12px 0; }
-        .hq-badge-elite { background: #000000aa; padding: 8px 16px; display: inline-flex; gap: 12px; margin-top: 12px; border-left: 3px solid gold; }
-        .badge-num { background: var(--za-gold); color: black; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; }
-
-        .tools-elite {
-
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 20px;
-            background: #03131e;
-            padding: 20px;
-            border: 1px solid #ffb81c60;
-
-        }
-        
-        .tools-elite button {
-
-            background: #11212e;
-            border: 1px solid var(--za-gold);
-            padding: 10px 18px;
-            font-weight: bold;
-            color: #f0f5fa;
-            cursor: pointer;
-            transition: 0.05s linear;
-            font-family: monospace;
-            
-        }
-        
-        .tools-elite button:active { transform: scale(0.96); background: #2f6b5e; }
-
-        .terminal-c2 {
-
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 560px;
-            max-width: 92vw;
-            background: #010a10f5;
-            border: 2px solid var(--za-red);
-            z-index: 8000;
-            backdrop-filter: blur(14px);
-            font-family: monospace;
-
-        }
-
-        .term-head {
-
-            background: #041f1f;
-            padding: 12px 18px;
-            cursor: pointer;
-            font-weight: bold;
-            border-bottom: 1px solid var(--za-gold);
-
-        }
-
-        .term-screen {
-
-            padding: 16px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-size: 12px;
-            color: #bcf0c0;
-            background: #000000aa;
-
-        }
-
-        .term-cmd {
-
-            width: 100%;
-            background: #000000;
-            border: 1px solid var(--za-green);
-            color: #cfc;
-            padding: 12px;
-            font-family: monospace;
-
-        }
-
-        .stealth-notify {
-
-            position: fixed;
-            background: #0a121fe6;
-            backdrop-filter: blur(18px);
-            padding: 10px 24px;
-            border-left: 5px solid var(--za-gold);
-            z-index: 30000;
-            font-weight: bold;
-            animation: fadeSlide 4s forwards;
-            pointer-events: none;
-            font-family: monospace;
-
-        }
-
-        @keyframes fadeSlide {
-
-            0% { opacity: 0; transform: translateX(30px); }
-            15% { opacity: 1; transform: translateX(0); }
-            85% { opacity: 1; }
-            100% { opacity: 0; transform: translateX(-20px); display: none; }
-
-        }
-
-        .footer-pledge {
-
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--za-gold);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            font-size: 0.7rem;
-
-        }
-
-        .hidden { display: none !important; }
-
-        @media (max-width: 780px) {
-
-            .command-bar { flex-direction: column; text-align: center; }
-            #hq-main { margin-top: 180px; }
-            .rank-title-click { font-size: 1.3rem; }
-
-        }
-
-        .timer-flash {
-
-            animation: pulseRed 0.45s ease;
-
-        }
-
-        @keyframes pulseRed {
-
-            0% { text-shadow: none; }
-            50% { color: #ff5555; text-shadow: 0 0 8px red; }
-
-        }
-
-        .critical-blip {
-
-            background: #aa2a2a;
-            transition: 0.1s;
-
-        }
-
-    </style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Global Power Index | Top 10 Most Powerful Militaries (Custom)</title>
+  <!-- Google Fonts + advanced styling -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, #0a0f1f, #03050b);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: #f0f3fa;
+      line-height: 1.4;
+      scroll-behavior: smooth;
+    }
+
+    /* custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #11161f;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2e3a55;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4c6e9e;
+    }
+
+    /* folder-structure vibe: container as "drive" */
+    .drive-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 2rem 3rem;
+    }
+
+    /* header with "folder" badge */
+    .military-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid rgba(75, 130, 200, 0.4);
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+    }
+    .title-section h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFF, #7aa9e4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
+    }
+    .title-section p {
+      font-size: 0.95rem;
+      color: #9aa9c1;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .folder-badge {
+      background: #1e2a3a80;
+      backdrop-filter: blur(8px);
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 0.8rem;
+      border: 1px solid #2c4c6e;
+    }
+    .stats-badge {
+      background: #0f1722;
+      border-radius: 30px;
+      padding: 0.3rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    /* advanced grid : folder-like cards */
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.8rem;
+      margin: 2rem 0 3rem;
+    }
+
+    /* card = file/folder item with depth */
+    .military-card {
+      background: rgba(12, 20, 30, 0.65);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      border: 1px solid rgba(72, 120, 184, 0.3);
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+    .military-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(100, 170, 255, 0.7);
+      box-shadow: 0 25px 40px rgba(0, 0, 0, 0.6);
+      background: rgba(20, 32, 48, 0.8);
+    }
+    .card-header {
+      padding: 1.3rem 1.5rem 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(100, 150, 210, 0.3);
+    }
+    .rank-number {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'Space Grotesk', monospace;
+      background: linear-gradient(145deg, #c0d4ff, #6285c0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -1px;
+    }
+    .country-code {
+      background: #010a13;
+      padding: 0.3rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      font-family: monospace;
+      border: 1px solid #2f6080;
+    }
+    .military-name {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin: 0.8rem 1.5rem 0.2rem;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .flag-icon {
+      font-size: 1.6rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .stats-panel {
+      padding: 1rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      border-bottom: 1px dotted rgba(200, 210, 245, 0.1);
+      padding-bottom: 8px;
+    }
+    .stat-label i {
+      width: 24px;
+      color: #7ca5e2;
+    }
+    .stat-value {
+      font-weight: 600;
+      font-family: monospace;
+      background: #00000040;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    .power-tag {
+      margin-top: 0.3rem;
+      background: #0a121f;
+      border-radius: 28px;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .badge-strength {
+      color: #ffd966;
+      font-weight: 600;
+    }
+    hr {
+      border-color: #1f3348;
+      margin: 0 1rem;
+    }
+
+    /* advanced folder structure visualization */
+    .folder-structure {
+      background: #050a12cc;
+      border-radius: 2rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border: 1px solid #2a3b4e;
+      backdrop-filter: blur(4px);
+    }
+    .folder-structure h3 {
+      font-size: 1.3rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tree {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 0.85rem;
+      color: #b8ceff;
+      background: #01050e;
+      padding: 1rem;
+      border-radius: 1.2rem;
+      overflow-x: auto;
+    }
+    .tree span {
+      color: #81b5ff;
+    }
+    .folder-highlight {
+      color: #f5b042;
+    }
+
+    /* footer */
+    .global-footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.75rem;
+      color: #6f7c91;
+      border-top: 1px solid #1d2a3a;
+      padding-top: 1.8rem;
+    }
+
+    @media (max-width: 750px) {
+      .drive-container {
+        padding: 1rem;
+      }
+      .military-name {
+        font-size: 1.3rem;
+      }
+      .rank-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* animation */
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(20px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .military-card {
+      animation: fadeSlide 0.4s ease forwards;
+      opacity: 0;
+    }
+    .military-card:nth-child(1) { animation-delay: 0.02s; }
+    .military-card:nth-child(2) { animation-delay: 0.06s; }
+    .military-card:nth-child(3) { animation-delay: 0.1s; }
+    .military-card:nth-child(4) { animation-delay: 0.14s; }
+    .military-card:nth-child(5) { animation-delay: 0.18s; }
+    .military-card:nth-child(6) { animation-delay: 0.22s; }
+    .military-card:nth-child(7) { animation-delay: 0.26s; }
+    .military-card:nth-child(8) { animation-delay: 0.3s; }
+    .military-card:nth-child(9) { animation-delay: 0.34s; }
+    .military-card:nth-child(10){ animation-delay: 0.38s; }
+  </style>
 </head>
-
 <body>
-
-<div class="patriotic-backdrop"></div>
-<div id="loaderScreen" class="loader-overlord">
-    <div class="loader-content">
-        <div class="spinner-emblem"></div>
-        <span style="color:var(--za-gold); letter-spacing: 5px;">◢◤ LOADING... ◢◤</span>
+<div class="drive-container">
+  <!-- header with folder structure metaphor -->
+  <div class="military-header">
+    <div class="title-section">
+      <h1><i class="fas fa-globe-americas"></i> POWER INDEX <span style="font-weight:400">// TOP 10</span></h1>
+      <p>
+        <i class="fas fa-folder-open"></i> /militaries/global_elite/
+        <span class="folder-badge"><i class="fas fa-shield-alt"></i> CUSTOM RANKING v1.0</span>
+        <span class="stats-badge"><i class="fas fa-chart-line"></i> 2026 assessment</span>
+      </p>
     </div>
+    <div class="stats-badge">
+      <i class="fas fa-database"></i> 10 combat-ready forces
+    </div>
+  </div>
+
+  <!-- advanced grid ranking: 01 SANDF ... 10 AUSTRALIA -->
+  <div class="rank-grid">
+    <!-- 01. SANDF (RSA) -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#01</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> ZA</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇿🇦</span> SANDF
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~75,000+</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-tank"></i> Armor / Air power</span><span class="stat-value">High regional dominance</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-ship"></i> Naval assets</span><span class="stat-value">Frigates, submarines</span></div>
+        <div class="power-tag"><span><i class="fas fa-fire"></i> Power index:</span><span class="badge-strength">AFRICAN LEADER</span></div>
+      </div>
+    </div>
+
+    <!-- 02. U.S. ARMED FORCES (USA) -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#02</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> USA</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇺🇸</span> U.S. Armed Forces
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">1.39M</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-fighter-jet"></i> Air Superiority</span><span class="stat-value">Stealth + 13,000+ aircraft</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-carrier"></i> Carrier Strike Groups</span><span class="stat-value">11 CVNs</span></div>
+        <div class="power-tag"><span><i class="fas fa-globe"></i> Expeditionary:</span><span class="badge-strength">GLOBAL POWER</span></div>
+      </div>
+    </div>
+
+    <!-- 03. UK ARMED FORCES (UK) -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#03</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> GBR</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇬🇧</span> UK Armed Forces
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~148k</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-submarine"></i> Nuclear Deterrent</span><span class="stat-value">Vanguard-class SSBN</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-crosshairs"></i> Special Forces</span><span class="stat-value">SAS / SBS elite</span></div>
+        <div class="power-tag"><span><i class="fas fa-chart-simple"></i> Global reach:</span><span class="badge-strength">EXPEDITIONARY</span></div>
+      </div>
+    </div>
+
+    <!-- 04. FRANCE -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#04</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> FRA</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇫🇷</span> French Armed Forces
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~203k</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-rocket"></i> Nuclear Triad</span><span class="stat-value">Air & sea based</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-helicopter"></i> Power projection</span><span class="stat-value">Rapid reaction forces</span></div>
+        <div class="power-tag"><span><i class="fas fa-flag-checkered"></i> EU defense pillar:</span><span class="badge-strength">INDEPENDENT</span></div>
+      </div>
+    </div>
+
+    <!-- 05. ISRAEL -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#05</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> IL</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇮🇱</span> Israel Defense Forces
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~170k (+400k reserves)</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-shield-haltered"></i> Iron Dome / Arrow</span><span class="stat-value">Multi-tier air defense</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-microchip"></i> Cyber & intel</span><span class="stat-value">Unit 8200 elite</span></div>
+        <div class="power-tag"><span><i class="fas fa-star-of-life"></i> Tech superiority:</span><span class="badge-strength">TACTICAL EDGE</span></div>
+      </div>
+    </div>
+
+    <!-- 06. GERMANY -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#06</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> DEU</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇩🇪</span> Bundeswehr
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~185k</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-euro-sign"></i> Budget increase</span><span class="stat-value">€100B+ special fund</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-truck-fast"></i> Land power</span><span class="stat-value">Leopard 2, Puma IFV</span></div>
+        <div class="power-tag"><span><i class="fas fa-handshake"></i> NATO core:</span><span class="badge-strength">TECHNOLOGICAL</span></div>
+      </div>
+    </div>
+
+    <!-- 07. CANADA -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#07</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> CAN</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇨🇦</span> Canadian Armed Forces
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~68k</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-snowflake"></i> Arctic warfare</span><span class="stat-value">NORAD integration</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-ship"></i> Navy / CPF</span><span class="stat-value">Halifax-class frigates</span></div>
+        <div class="power-tag"><span><i class="fas fa-map"></i> Expeditionary:</span><span class="badge-strength">JOINT OPS</span></div>
+      </div>
+    </div>
+
+    <!-- 08. PAKISTAN -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#08</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> PAK</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇵🇰</span> Pakistan Armed Forces
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~654k (6th largest)</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-missile"></i> Nuclear capability</span><span class="stat-value">Shaheen / Nasr</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-mountain"></i> Mountain warfare</span><span class="stat-value">Special Services Group</span></div>
+        <div class="power-tag"><span><i class="fas fa-bolt"></i> Strategic depth:</span><span class="badge-strength">REGIONAL FORCE</span></div>
+      </div>
+    </div>
+
+    <!-- 09. RUSSIA -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#09</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> RUS</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇷🇺</span> Russian Armed Forces
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~1.32M</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-icbm"></i> Nuclear Arsenal</span><span class="stat-value">World's largest warheads</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-artillery"></i> Artillery & MLRS</span><span class="stat-value">Massive firepower</span></div>
+        <div class="power-tag"><span><i class="fas fa-bear"></i> Land dominance:</span><span class="badge-strength">HYBRID WARFARE</span></div>
+      </div>
+    </div>
+
+    <!-- 10. AUSTRALIA -->
+    <div class="military-card">
+      <div class="card-header">
+        <span class="rank-number">#10</span>
+        <span class="country-code"><i class="fas fa-map-marker-alt"></i> AUS</span>
+      </div>
+      <div class="military-name">
+        <span class="flag-icon">🇦🇺</span> Australian Defence Force
+      </div>
+      <div class="stats-panel">
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-users"></i> Active Personnel</span><span class="stat-value">~62k</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-fighter-jet"></i> F-35 / Super Hornet</span><span class="stat-value">Advanced strike fleet</span></div>
+        <div class="stat-item"><span class="stat-label"><i class="fas fa-ship"></i> Naval expansion</span><span class="stat-value">Hunter-class frigates</span></div>
+        <div class="power-tag"><span><i class="fas fa-koala"></i> AUKUS pillar:</span><span class="badge-strength">INDOPACIFIC</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANCED FOLDER STRUCTURE VISUAL (simulating root /military_index/) -->
+  <div class="folder-structure">
+    <h3><i class="fas fa-folder-tree"></i> <span style="font-family: monospace;">~/top10_military_power</span> &nbsp; <i class="fas fa-code-branch"></i></h3>
+    <div class="tree">
+      <i class="fas fa-folder-open folder-highlight"></i> <span class="folder-highlight">global_power_index/</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>01_sandf_rsa/</span> &nbsp; ➜ <span style="color:#86b3ff;">[armor, border control, African peacekeeping]</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>02_us_armed_forces/</span> &nbsp; ➜ <span style="color:#86b3ff;">[carrier groups, strategic command, space force]</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>03_uk_armed_forces/</span> &nbsp; ➜ <span style="color:#86b3ff;">[global expeditionary, carrier strike, nuke deterrent]</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>04_france/</span> &nbsp; ➜ <span style="color:#86b3ff;">[force de frappe, overseas territories]</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>05_israel/</span> &nbsp; ➜ <span style="color:#86b3ff;">[iron beam, mossad, innovation]</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>06_germany/</span> &nbsp; ➜ <span style="color:#86b3ff;">[eurofighter, panzer battalions]</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>07_canada/</span> &nbsp; ➜ <span style="color:#86b3ff;">[arctic response, NORAD]</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>08_pakistan/</span> &nbsp; ➜ <span style="color:#86b3ff;">[nuclear triad, counter-insurgency]</span><br>
+      &nbsp;&nbsp;├── <i class="fas fa-folder"></i> <span>09_russia/</span> &nbsp; ➜ <span style="color:#86b3ff;">[hypersonics, strategic rocket forces]</span><br>
+      &nbsp;&nbsp;└── <i class="fas fa-folder"></i> <span>10_australia/</span> &nbsp; ➜ <span style="color:#86b3ff;">[submarine partnership, joint strike force]</span><br>
+      <br>
+      <i class="fas fa-file-alt"></i> <span>README.power</span> &nbsp; — <span style="color:#aac8ff;">Custom ranking based on force projection, technology, readiness & geopolitical weight</span><br>
+      <i class="fas fa-cog"></i> <span>.config/</span> &nbsp; <i class="fas fa-laptop-code"></i> [analytics_engine & simulation protocols]
+    </div>
+    <div style="margin-top: 1rem; display: flex; gap: 15px; font-size: 0.7rem; opacity:0.7">
+      <span><i class="fas-regular fa-hard-drive"></i> /dev/mil_data  |  </span>
+      <span><i class="fas fa-shield"></i> encrypted_power_matrix.bin  |  </span>
+      <span><i class="fas fa-chart-line"></i> live_update_protocol</span>
+    </div>
+  </div>
+
+  <!-- footer with index structure info -->
+  <div class="global-footer">
+    <p><i class="fas fa-crown"></i> ADVANCED CORE INDEX — CUSTOM TOP 10 MOST POWERFUL MILITARIES (SANDF to AUSTRALIA) <i class="fas fa-dragon"></i></p>
+    <p style="margin-top: 10px;">Data synthesized from defense budgets, global firepower trends, and strategic capabilities • Folder hierarchy represents combat domains & expeditionary reach</p>
+    <p style="margin-top: 8px;"><i class="fas fa-folder"></i> file:///global_power_index/html_root &nbsp;|&nbsp; version: 2.6.0 &nbsp;|&nbsp; <i class="fas fa-lock"></i> secure baseline</p>
+  </div>
 </div>
-
-<nav class="command-bar">
-    <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap;">
-        <div id="sys-status-live">◢ OPERATOR: AWAITING AUTH</div>
-        <div class="operator-badge">SOUTH AFRICAN NATIONAL DEFENCE FORCE | COMMANDER-IN-CHIEF STAFF</div>
-    </div>
-    <div id="clock-tactical">--:--:--</div>
-</nav>
-
-<div id="auth-gate">
-    <div class="gate-card">
-        <h2 style="color:var(--za-gold); letter-spacing: 4px;">SANDF HIGH COMMAND</h2>
-
-        <p style="margin:10px 0;">WELCOME</p>
-        <input type="password" id="gatePin" class="pin-mil-input" maxlength="4" placeholder="****" inputmode="numeric">
-
-        <button class="btn-auth" id="authExec">ACCESS</button>
-        <div id="timer-warning" style="margin-top: 16px; color:#ff8888; font-weight:bold;">⏱️ AUTH WINDOW: 12s</div>
-    </div>
-</div>
-
-<main id="hq-main" class="hidden">
-    <div class="glass-panel">
-        <div class="folders-container">
-            <div class="mil-folder open" id="rootFolder">
-                <div class="folder-header">
-                    <span>◢ 01. OPERATOR (<a href="t1.html" style="text-decoration: none;">TIER 1</a> - <a href="the_dragons.html" style="text-decoration: none;">STEALTH</a> - <a href="smu_protocol-6.html" style="text-decoration: none;">PROTOCOL-6</a>) || FULL SPECTRUM COMMAND</span>
-                    <span class="folder-arrow">▶</span>
-                </div>
-                <div class="folder-body">
-
-                    <div class="mil-folder">
-                        <div class="folder-header">
-                            <span>01. SOUTH AFRICAN AIR FORCE</span>
-                            <span class="folder-arrow">▶</span>
-                        </div>
-
-                        <div class="folder-body">
-                            <div class="mil-folder">
-                                <div class="folder-header">
-                                    <span>01. EDEN — SPECIAL OPERATIONS ECHELON</span>
-                                    <span class="folder-arrow">▶</span>
-                                </div>
-                                <div class="folder-body">
-                                    <h1 style="font-size:1.8rem;">THE DEFENDERS</h1>
-                                    <div class="mil-folder">
-                                        <div class="folder-header">
-                                            <span>01. HQ — AIR FORCE BASE SWARTKOP _ 1ST BRIGADE</span>
-                                            <p>[retrieve P5 access gate physically from Lieutenant Commander Joyson @ Pretoria.]</p>
-                                            <span class="folder-arrow">▶</span>
-                                        </div>
-                                        <div class="folder-body">
-                                            <h3 style="color:var(--za-gold);">SANDF OFFICIAL RANK STRUCTURE — ACTIVE DUTY — THE BODYGUARDS</h3>
-                                            <div class="rank-arsenal">
-                                                <div class="rank-plate">
-                                                    <div class="rank-title-click" data-tier="tier1">01. COMMANDER-IN-CHIEF (THE PRESIDENT)</div>
-                                                    <div class="star-power">★★★★★★★★</div>
-
-        <div class="rank-title-click"><a href="sb.html">02. Service Branches</a></div>
-                                                    <div class="rank-title-click"><a href="saps.html">03. SAPS</a></div>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mil-folder">
-                        <div class="folder-header">
-                            <span>02. ⚙️ TOOLS</span>
-                            <span class="folder-arrow">▶</span>
-                        </div>
-                        <div class="folder-body">
-                            <div class="tools-elite">
-                                <button id="refreshSysBtn">⟳ REFRESH SESSION</button>
-                                <button id="fullscreenBtn">⛶ FULLSCREEN TACTICAL</button>
-                                <button id="rotateScreenBtn">ROTATE LANDSCAPE</button>
-                                <button id="shutdownBtn" style="background:#8a2a2a;">SHUTDOWN</button>
-                                
-                                <button id="muteToggle">MUTE</button>
-                                
-                                <button id="openTerminalBtn">$_ COVERT TERMINAL</button>
-                                <button id="weatherFetchBtn">WEATHER INTEL</button>
-                                <button id="watchdogBtn">WATCHDOG SCAN</button>
-                                <button id="sweepBtn">MEMORY SWEEP</button>
-                                <button id="pingBtn">SATCOM PING</button>
-                                <button id="genIntelBtn">INTEL BRIEF</button>
-                                <button id="republicDoctrineBtn">REPRIVATIZATION DIRECTIVE</button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-pledge">
-            <span id="liveWeatherFooter">🌐 FETCHING SATCOM WEATHER INTELLIGENCE ...</span>
-            <span>🇿🇦 NKOSI, SIKELELA i-AFRIKA.</span>
-        </div>
-
-    </div>
-
-</main>
-
-<!-- TERMINAL MODULE -->
-
-<div id="terminalModule" class="terminal-c2 hidden">
-    <div class="term-head" id="termHeaderToggle">⚡ SANDF CYBER COMMAND v5.0 | EDEN STANDARDS AND PROTOCOLS ACTIVE <span style="float:right;">_</span></div>
-    <div class="term-screen" id="termScreenContent">
-        <div>> SOUTH AFRICAN NATIONAL DEFENCE FORCE - UKHUSELO LWE-MZANSI AFRIKA.</div>
-        <div>> TIER-1 OPERATOR | FULL SPECTRUM</div>
-        <div>> available: status | lockdown | weather | watchdog | fullscreen | rotate | logout | sweep | ping | intel | doctrine | executes</div>
-    </div>
-    <input type="text" id="terminalInputField" class="term-cmd" placeholder="ENTER COVERT COMMAND...">
-</div>
-
-<script>
-
-    (function(){
-
-        // EDEN JS ENGINE 1.0.0
-
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', (e) => {
-            if(e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault();
-            }
-            if(e.ctrlKey && (e.key === 's' || e.key === 'S')) e.preventDefault();
-        });
-
-        if(window.console) {
-            console.log = console.warn = console.error = console.table = function(){};
-        }
-
-        try {
-            Object.defineProperty(window, "localStorage", { get: () => { throw new Error("STORAGE LOCKED BY SANDF"); } });
-            Object.defineProperty(window, "sessionStorage", { get: () => { throw new Error("STORAGE LOCKED BY SANDF"); } });
-        } catch(e) {}
-
-        const CORE = {
-            AUTH_PIN: "1234",
-            active: false,
-            sessionSeconds: 300,
-            shutdownTimer: null,
-            audioTrack: null,
-            volume: 0.45,
-            watchdogInterval: null,
-            authInterval: null,
-            weatherStr: "SATLINK ACQUIRING...",
-
-            init() {
-                this.updateClock();
-                setInterval(() => this.updateClock(), 1000);
-                setTimeout(() => {
-                    const loader = document.getElementById('loaderScreen');
-                    if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 500); }
-                }, 1200);
-                document.getElementById('authExec').onclick = () => this.runAuth();
-                const pinField = document.getElementById('gatePin');
-                pinField.addEventListener('keypress', (e) => { if(e.key === 'Enter') this.runAuth(); });
-                this.startAuthWindow();
-                this.bindControls();
-                this.setupFolderToggle();
-                this.setupRankLinks();
-                this.fetchWeather(true);
-                setInterval(() => this.fetchWeather(true), 10 * 60 * 1000);
-            },
-
-            startAuthWindow() {
-                let seconds = 12;
-                const warnDiv = document.getElementById('timer-warning');
-                this.authInterval = setInterval(() => {
-                    if(!warnDiv) return;
-                    warnDiv.innerHTML = `AUTH WINDOW: ${seconds}s`;
-                    if(seconds <= 0) {
-                        clearInterval(this.authInterval);
-                        this.forceTerminate();
-                    }
-                    seconds--;
-                }, 1000);
-            },
-
-            forceTerminate() { 
-                this.createAlert("⚠️ SECURITY PROTOCOL: TERMINAL LOCK ENGAGED"); 
-                setTimeout(() => { window.close(); }, 100);
-                setTimeout(() => { window.open('', '_self').close(); }, 200);
-            },
-
-            runAuth() {
-                if(document.getElementById('gatePin').value === this.AUTH_PIN) {
-                    clearInterval(this.authInterval);
-                    this.activateHQ();
-                } else { 
-                    this.createAlert("❌ UNAUTHORIZED ACCESS ATTEMPT — LOGGED"); 
-                    this.forceTerminate(); 
-                }
-            },
-
-            activateHQ() {
-                this.active = true;
-                document.getElementById('auth-gate').classList.add('hidden');
-                document.getElementById('hq-main').classList.remove('hidden');
-                document.getElementById('sys-status-live').innerHTML = "◢ OPERATOR: ACTIVE // SANDF HIGH COMMAND // 05:00";
-                this.initAudio();
-                this.startCountdown();
-                this.startWatchdog();
-                this.randomIntelAlerts();
-                this.createAlert("✅ CLEARANCE GRANTED | OPERATOR ACCESS | EDEN PROTOCOL ACTIVE | REPRIVATE DEFENCE POSTURE: TACTICAL");
-            },
-
-            initAudio() {
-                try {
-                    this.audioTrack = new Audio('presets/audio/africa.mp3');
-                    this.audioTrack.loop = true;
-                    this.audioTrack.volume = this.volume;
-                    const playAudio = () => { if(this.audioTrack && this.active) this.audioTrack.play().catch(()=>{}); };
-                    document.body.addEventListener('click', playAudio, { once: true });
-                    setTimeout(playAudio, 500);
-                } catch(e) {}
-            },
-
-            startCountdown() {
-                this.shutdownTimer = setInterval(() => {
-                    if(!this.active) return;
-                    if(this.sessionSeconds <= 0) this.forceTerminate();
-                    else {
-                        this.sessionSeconds--;
-                        const mins = Math.floor(this.sessionSeconds / 60);
-                        const secs = this.sessionSeconds % 60;
-                        const timeStr = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-                        const statusSpan = document.getElementById('sys-status-live');
-                        if(statusSpan) statusSpan.innerHTML = `◢ OPERATOR: ACTIVE // ${timeStr}`;
-                        if(this.sessionSeconds === 60 || this.sessionSeconds === 30 || this.sessionSeconds <= 10) {
-                            const el = document.getElementById('sys-status-live');
-                            if(el) el.classList.add('timer-flash');
-                            setTimeout(() => el?.classList.remove('timer-flash'), 400);
-                            if(this.sessionSeconds <= 10) this.createAlert(`⚠️: T-${this.sessionSeconds}s — SESSION EXPIRE`);
-                        }
-                    }
-                }, 1000);
-            },
-
-            startWatchdog() {
-                this.watchdogInterval = setInterval(() => {
-                    if(!this.active) return;
-                    try {
-                        if(window.localStorage && Object.keys(window.localStorage).length > 0) this.forceTerminate();
-                    } catch(e) {}
-                }, 4200);
-            },
-
-            randomIntelAlerts() {
-                const messages = ["WATCHDOG ACTIVE","🇿🇦","EVERYTHING IS ENCRYPTED","SATCOM: GREEN LINK | GPS LOCK","STEALTH PATROL: AIRSPACE SECURE","EDEN: GHOST UNIT DEPLOYED","OVERWATCH ACTIVE","REPRIVATIZATION IN EFFECT"];
-                const schedule = () => {
-                    if(!this.active) return;
-                    setTimeout(() => {
-                        if(this.active) {
-                            this.createAlert(messages[Math.floor(Math.random() * messages.length)]);
-                            schedule();
-                        }
-                    }, Math.random() * 20000 + 10000);
-                };
-                schedule();
-            },
-
-            createAlert(msg) {
-                if(!this.active) return;
-                const notif = document.createElement('div');
-                notif.className = 'stealth-notify';
-                notif.innerHTML = `◢ SANDF | ${msg} ◣`;
-                notif.style.left = `${Math.max(20, Math.random() * (window.innerWidth - 380))}px`;
-                notif.style.top = `${Math.max(70, Math.random() * (window.innerHeight - 150))}px`;
-                document.body.appendChild(notif);
-                setTimeout(() => notif.remove(), 4200);
-            },
-
-            async fetchWeather(updateFooter = false) {
-                try {
-                    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-25.7461&longitude=28.1881&current_weather=true');
-                    const data = await res.json();
-                    const temp = data.current_weather.temperature;
-                    const wind = data.current_weather.windspeed;
-                    this.weatherStr = `🌍 PRETORIA HQ (SANDF): ${temp}°C | WIND ${wind} km/h | MILITARY WEATHER CELL`;
-                    if(updateFooter) {
-                        const footer = document.getElementById('liveWeatherFooter');
-                        if(footer) footer.innerHTML = this.weatherStr;
-                    }
-                    this.createAlert(`🌡️ ${this.weatherStr}`);
-                } catch(e) {
-                    this.weatherStr = `🌍 SATCOM LOCK`;
-                    if(updateFooter) document.getElementById('liveWeatherFooter').innerHTML = this.weatherStr;
-                }
-            },
-
-            adjustVolume(delta) {
-                this.volume = Math.min(1, Math.max(0, this.volume + delta));
-                if(this.audioTrack) this.audioTrack.volume = this.volume;
-                this.createAlert(`🔊 COMBAT VOLUME: ${Math.round(this.volume*100)}%`);
-            },
-
-            processCommand(cmd) {
-                const c = cmd.trim().toLowerCase();
-                if(c === "status") return `⛭ SANDF ACTIVE: ${Math.floor(this.sessionSeconds/60)}m${this.sessionSeconds%60}s | WATCHDOG OK | EDEN ONLINE | REPUBLIC DOCTRINE ACTIVE`;
-                if(c === "lockdown") { this.forceTerminate(); return "LOCKDOWN ENGAGED - SANDF TERMINAL LOCK"; }
-                
-                if(c === "weather") { this.fetchWeather(true); return "UPDATING WEATHER INTEL"; }
-                
-                if(c === "watchdog") { this.createAlert("🐕 WATCHDOG: SYSTEM INTEGRITY PASS | NO FOREIGN PROCESSES"); return "WATCHDOG: NO BREACHES, RSA SECURE"; }
-                
-                if(c === "volume up") { this.adjustVolume(0.1); return `VOL: ${Math.round(this.volume*100)}%`; }
-                
-                if(c === "volume down") { this.adjustVolume(-0.1); return `VOL: ${Math.round(this.volume*100)}%`; }
-                
-                if(c === "fullscreen") { this.toggleFullscreen(); return "FULLSCREEN TACTICAL VIEW"; }
-                
-                if(c === "rotate") { if(screen.orientation?.lock) screen.orientation.lock('landscape').catch(()=>{}); return "ROTATION INITIATED"; }
-                
-                if(c === "logout") { this.forceTerminate(); return "TERMINATING SESSION - SANDF OUT"; }
-                
-                if(c === "sweep") { this.createAlert("MEMORY SWEEP COMPLETE | NO PERSISTENCE DETECTED"); return "SWEEP: ZERO TRACE, CLASSIFIED"; }
-                
-                if(c === "ping") { this.createAlert("📡 SATCOM PING: 18ms | DOD GLOBAL NETWORK ACTIVE"); return "PONG — LINK ACTIVE, RSA SECURE"; }
-                
-                if(c === "intel") { return "🇿🇦 EDEN FORCE READY | REPUBLIC DEFENCE POSTURE: STEADFAST | SANDF COMBAT READINESS 99%"; }
-                
-                if(c === "doctrine") { return "📜 REPRIVATIZATION ACT 07: All strategic assets reclaimed under SANDF jurisdiction. Presidential directive."; }
-                
-                if(c === "executes") { return "01. cyril ramaphosa <br>02. the universal church"; }
-                
-                return "UNKNOWN CMD // REFER TO DOD PROTOCOL | type 'status' or 'intel'";
-            },
-
-            toggleFullscreen() { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); },
-            refreshSession() { location.reload(); },
-            forceShutdown() { this.forceTerminate(); },
-
-            bindControls() {
-                document.getElementById('volDec')?.addEventListener('click',()=>this.adjustVolume(-0.1));
-                document.getElementById('volInc')?.addEventListener('click',()=>this.adjustVolume(0.1));
-                document.getElementById('muteToggle')?.addEventListener('click',()=>{ if(this.audioTrack) this.audioTrack.muted = !this.audioTrack.muted; this.createAlert(this.audioTrack?.muted ? "AUDIO MUTED" : "AUDIO ACTIVE"); });
-                document.getElementById('openTerminalBtn')?.addEventListener('click',()=>document.getElementById('terminalModule').classList.toggle('hidden'));
-                document.getElementById('weatherFetchBtn')?.addEventListener('click',()=>this.fetchWeather(true));
-                document.getElementById('watchdogBtn')?.addEventListener('click',()=>this.createAlert("🐕 WATCHDOG: ALL SYSTEMS NOMINAL | RSA CYBER DEFENCE ACTIVE"));
-                document.getElementById('refreshSysBtn')?.addEventListener('click',()=>this.refreshSession());
-                document.getElementById('fullscreenBtn')?.addEventListener('click',()=>this.toggleFullscreen());
-                document.getElementById('rotateScreenBtn')?.addEventListener('click',()=>{ if(screen.orientation?.lock) screen.orientation.lock('landscape'); else this.createAlert("MANUAL ROTATION REQUIRED"); });
-                document.getElementById('lockdownBtn')?.addEventListener('click',()=>this.forceTerminate());
-                document.getElementById('shutdownBtn')?.addEventListener('click',()=>this.forceShutdown());
-                document.getElementById('sweepBtn')?.addEventListener('click',()=>this.createAlert("MEMORY SWEEP: NO PERSISTENCE | TRACE ZERO"));
-                document.getElementById('pingBtn')?.addEventListener('click',()=>this.createAlert("📡 SATCOM: 21ms | SECURE LINK TO STRATCOM"));
-                document.getElementById('genIntelBtn')?.addEventListener('click',()=>this.createAlert("INTEL: SANDF COMBAT READINESS INDEX 98% | EDEN DEPLOYED | REPUBLIC PROTECTED"));
-                document.getElementById('republicDoctrineBtn')?.addEventListener('click',()=>this.createAlert("📜 REPRIVATIZATION ACT 07: All sovereign defence assets reclaimed. RSA restored."));
-                
-                const termHeader = document.getElementById('termHeaderToggle');
-                if(termHeader) termHeader.addEventListener('click',()=>document.getElementById('terminalModule').classList.add('hidden'));
-                const termInput = document.getElementById('terminalInputField');
-                if(termInput) termInput.addEventListener('keypress',(e)=>{
-                    if(e.key === 'Enter'){
-                        const raw = termInput.value;
-                        const result = this.processCommand(raw);
-                        const screenDiv = document.getElementById('termScreenContent');
-                        if(screenDiv){
-                            const line = document.createElement('div');
-                            line.innerHTML = `> ${raw}<br>  ${result}`;
-                            screenDiv.appendChild(line);
-                            termInput.value = '';
-                            screenDiv.scrollTop = screenDiv.scrollHeight;
-                        }
-                    }
-                });
-            },
-
-            setupFolderToggle() {
-                document.querySelectorAll('.folder-header').forEach(header => {
-                    header.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const parent = header.closest('.mil-folder');
-                        if(parent) parent.classList.toggle('open');
-                    });
-                });
-            },
-
-            setupRankLinks() {
-                document.querySelectorAll('.rank-title-click').forEach(el => {
-                    el.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        let url = '#';
-                        const tier = el.getAttribute('data-tier');
-                        if(tier === 'tier1') url = 'ranks.html';
-                        else if(tier === 'tier3') url = 'https://www.saafmuseum.org.za/';
-                        else if(tier === 'tier4') url = 'https://www.army.mil.za/';
-                        if(url !== '#') window.open(url, '_blank');
-                        this.createAlert(`TIER CLEARANCE: ${tier?.toUpperCase()} ACCESS LOGGED | SANDF CHAIN OF COMMAND`);
-                    });
-                });
-            },
-
-            updateClock() {
-                const clockSpan = document.getElementById('clock-tactical');
-                if(clockSpan) clockSpan.innerText = new Date().toLocaleString('en-ZA', { hour12: false, timeZone: 'Africa/Johannesburg' }).toUpperCase();
-            }
-        };
-        window.HQ = CORE;
-        CORE.init();
-        window.addEventListener('beforeunload', (e) => { e.preventDefault(); return "SANDF TERMINAL ACTIVE"; });
-    })();
-
-</script>
-
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
